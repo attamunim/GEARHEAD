@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GEARHEAD — Bike Service</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <span class="name">GEARHEAD</span>
+        <span class="tag">Bike Service</span>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-item active" data-screen="intake">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        New Customer
+      </div>
+      <div class="nav-item" data-screen="customers">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Customers
+      </div>
+      <div class="nav-item" data-screen="job">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>
+        Add Job / Repair
+        <span class="nav-badge" id="activeJobsBadge" style="display:none;">0</span>
+      </div>
+      <div class="nav-item" data-screen="bill">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Bills
+      </div>
+      <div class="nav-item" data-screen="reminders">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Reminders
+        <span class="nav-badge" id="reminderBadge" style="display:none;">0</span>
+      </div>
+      <div class="nav-item" data-screen="reports">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 5-7"/></svg>
+        Reports
+      </div>
+      <div class="nav-item" data-screen="settings">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.38.55.72 1 .9.33.14.7.1 1.1.1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
+        Settings
+      </div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="mech-avatar">RK</div>
+      <div class="mech-meta">
+        <div class="mname">Shop Owner</div>
+        <div class="mrole">GEARHEAD</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <h1 id="topbarTitle">New Customer Intake</h1>
+        <div class="sub" id="topbarSub">When a bike arrives at the shop, log it here first</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===== SCREEN 1: NEW CUSTOMER / BIKE INTAKE ===== -->
+      <div class="screen active" id="screen-intake">
+        <div class="panel">
+          <div class="panel-title">Customer & Bike Details</div>
+          <div class="panel-desc">Fill this in once when the bike comes in. Date & time are stamped automatically.</div>
+
+          <form id="intakeForm">
+            <div class="form-grid">
+              <div class="field">
+                <label>Customer Name</label>
+                <input type="text" id="in_name" placeholder="e.g. Bilal Ahmed" required>
+              </div>
+              <div class="field mono">
+                <label>Bike Number</label>
+                <input type="text" id="in_bike" placeholder="e.g. LEF-19-4471" required>
+              </div>
+              <div class="field mono">
+                <label>Mobile Number</label>
+                <input type="text" id="in_mobile" placeholder="e.g. 0301-2345678" required>
+              </div>
+              <div class="field mono">
+                <label>Meter Reading (km)</label>
+                <input type="text" id="in_meter" placeholder="e.g. 14820" inputmode="numeric">
+              </div>
+              <div class="field locked mono">
+                <label>Date <span class="auto-tag">auto</span></label>
+                <input type="text" id="in_date" readonly>
+              </div>
+              <div class="field locked mono">
+                <label>Time <span class="auto-tag">auto</span></label>
+                <input type="text" id="in_time" readonly>
+              </div>
+              <div class="field full">
+                <label>What's it in for? <span class="auto-tag">optional note</span></label>
+                <textarea rows="2" id="in_note" placeholder="e.g. Strange noise from engine, brakes feel loose…"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="in_clear">Clear</button>
+              <button type="submit" class="btn btn-primary">Save Customer & Bike →</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">Recently Added</div>
+          <div class="panel-desc">Last few customers logged in.</div>
+          <div id="recentCustomers" class="recent-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 2: CUSTOMERS ===== -->
+      <div class="screen" id="screen-customers">
+        <div class="panel">
+          <div class="panel-title">All Customers</div>
+          <div class="panel-desc">View, update, delete, and open each customer's visit report.</div>
+
+          <div class="lookup-row">
+            <input type="text" id="customer_filter" placeholder="Filter by name, bike number, or mobile...">
+            <button class="btn btn-ghost" id="customer_refresh">Refresh</button>
+          </div>
+
+          <div id="customerList" class="customer-list"></div>
+        </div>
+
+        <div class="panel" id="customerReportPanel" style="display:none; margin-top:18px;">
+          <div class="panel-title">Customer Report</div>
+          <div class="panel-desc">Visit count with date and time for every recorded job.</div>
+          <div id="customerReport"></div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 3: ADD JOB / REPAIR DONE ===== -->
+      <div class="screen" id="screen-job">
+        <div class="panel">
+          <div class="panel-title">Add Job — What Was Done</div>
+          <div class="panel-desc">Find the customer by bike number or mobile, then log what work was completed.</div>
+
+          <div class="lookup-row">
+            <input type="text" id="job_search" placeholder="Search by bike number, mobile, or name…">
+            <button class="btn btn-ghost" id="job_searchBtn">Find</button>
+          </div>
+
+          <div id="job_searchResults" class="search-results"></div>
+
+          <div id="job_customerFound" class="customer-found" style="display:none;"></div>
+
+          <div id="job_formArea" style="display:none;">
+
+            <div class="form-grid" style="margin-bottom:18px;">
+              <div class="field locked mono">
+                <label>Date <span class="auto-tag">auto</span></label>
+                <input type="text" id="job_date" readonly>
+              </div>
+              <div class="field locked mono">
+                <label>Time <span class="auto-tag">auto</span></label>
+                <input type="text" id="job_time" readonly>
+              </div>
+            </div>
+
+            <div class="field full" style="margin-bottom:10px;">
+              <label>Work Completed <span class="auto-tag">tick what was done — price auto-fills, you can edit it</span></label>
+            </div>
+            <div class="service-list" id="job_serviceList"></div>
+
+            <div class="add-custom-row">
+              <input class="item-name" type="text" id="job_customName" placeholder="+ Add a custom item (e.g. Headlight bulb)">
+              <input class="item-price" type="text" id="job_customPrice" placeholder="Rs price" inputmode="numeric">
+              <button type="button" id="job_addCustomBtn">Add</button>
+            </div>
+
+            <div class="field full" style="margin:16px 0 10px 0;">
+              <label>Mechanic Notes <span class="auto-tag">optional</span></label>
+              <textarea rows="2" id="job_notes" placeholder="Anything worth remembering for next visit…"></textarea>
+            </div>
+
+            <div class="total-strip">
+              <span class="total-label">Running Total</span>
+              <span class="total-value" id="job_runningTotal">Rs 0</span>
+            </div>
+
+            <div class="form-actions" style="margin-top:18px;">
+              <button type="button" class="btn btn-ghost" id="job_saveDraft">Save Draft</button>
+              <button type="button" class="btn btn-primary" id="job_completeBtn">Mark Job Done → Generate Bill</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 4: BILLS ===== -->
+      <div class="screen" id="screen-bill">
+        <div class="panel" id="bill_panel">
+          <div class="panel-title">Bill</div>
+          <div class="panel-desc">Generated automatically when a job is marked done.</div>
+          <div id="bill_empty" class="empty-note" style="display:none;">No bill selected yet. Complete a job, or pick one from Recent Bills below.</div>
+          <div id="bill_preview"></div>
+          <div class="form-actions" id="bill_actions" style="display:none;">
+            <button class="btn btn-ghost" id="bill_back">Back to Job</button>
+            <button class="btn btn-primary" id="bill_print">🖨 Print Bill</button>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">Recent Bills</div>
+          <div id="recentBills" class="recent-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 5: REMINDERS ===== -->
+      <div class="screen" id="screen-reminders">
+        <div class="panel">
+          <div class="panel-title">30-Day Service Reminders</div>
+          <div class="panel-desc">Auto-created 30 days after each customer's last completed job. Use Call when a reminder is due.</div>
+
+          <div class="reminder-list" id="reminderList"></div>
+          <div class="empty-note" id="reminder_empty" style="display:none;">No reminders due right now. Nice and quiet.</div>
+          <div class="empty-note">⏱ Reminder = last completed job date + 30 days. Updates automatically as jobs finish.</div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 6: REPORTS ===== -->
+      <div class="screen" id="screen-reports">
+        <div class="panel">
+          <div class="panel-title">Reports</div>
+          <div class="panel-desc">Simple totals for today, this week, and this month.</div>
+          <div class="report-grid" id="reportGrid"></div>
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">Recent Work</div>
+          <div id="reportRecentBills" class="recent-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN 7: SETTINGS ===== -->
+      <div class="screen" id="screen-settings">
+        <div class="panel">
+          <div class="panel-title">Theme</div>
+          <div class="panel-desc">Pick the look that is easiest on the eyes.</div>
+          <div class="theme-options">
+            <button class="theme-choice" type="button" data-theme="dark"><span class="swatch swatch-dark"></span> Dark</button>
+            <button class="theme-choice" type="button" data-theme="light"><span class="swatch swatch-light"></span> Light</button>
+            <button class="theme-choice" type="button" data-theme="comfort"><span class="swatch swatch-comfort"></span> Comfort</button>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">Backup & Restore</div>
+          <div class="panel-desc">Save a copy of shop data, or restore from an older backup file.</div>
+          <div class="form-actions settings-actions">
+            <button class="btn btn-primary" type="button" id="backupBtn">Create Backup</button>
+            <button class="btn btn-ghost" type="button" id="autoBackupDirBtn">Choose Auto Backup Folder</button>
+            <button class="btn btn-ghost" type="button" id="restoreBtn">Restore Backup</button>
+          </div>
+          <div class="empty-note" id="backupStatus">Backup files contain customers, jobs, bills, services, and reminders.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="renderer.js"></script>
+</body>
+</html>
