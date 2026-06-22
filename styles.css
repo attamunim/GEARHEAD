@@ -1910,3 +1910,223 @@ body {
   line-height: 1.5;
   padding: 0 4px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE VIEW ADAPTATION (< 768px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+
+  /* 1. Main shell container - stacks sidebar on bottom */
+  .shell {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr auto !important;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 2. Transform left sidebar into a modern bottom tab-bar */
+  .sidebar {
+    position: relative;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    padding: 0 !important;
+    height: 62px !important;
+    flex-direction: row !important;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--steel-800);
+    z-index: 1000;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  .sidebar .brand,
+  .sidebar .sidebar-foot {
+    display: none !important; /* Hide logo/brand & mechanic info on mobile bar */
+  }
+
+  .sidebar .nav-group {
+    flex-direction: row !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 4px !important;
+    gap: 0 !important;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .sidebar .nav-item {
+    flex: 1 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    padding: 6px 0 !important;
+    height: 100% !important;
+    border-left: none !important;
+    border-top: 3px solid transparent !important;
+    border-radius: 0 !important;
+    font-size: 9.5px !important;
+    color: var(--paper-dim);
+    transition: none !important; /* Fast touch feedback */
+  }
+
+  .sidebar .nav-item:hover {
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  .sidebar .nav-item.active {
+    background: transparent !important;
+    color: var(--orange) !important;
+    border-top-color: var(--orange) !important;
+    box-shadow: none !important;
+  }
+
+  .sidebar .nav-icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Position notification badges as overlays on icons */
+  .sidebar .nav-badge {
+    position: absolute;
+    top: 5px;
+    right: calc(50% - 18px);
+    margin: 0 !important;
+    font-size: 8px !important;
+    padding: 1px 4.5px !important;
+    line-height: 1 !important;
+  }
+
+  /* 3. Main layout content columns */
+  .main {
+    height: 100% !important;
+    overflow: hidden;
+  }
+
+  .topbar {
+    padding: 14px 18px !important;
+    border-bottom: 1px solid var(--line);
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .topbar h1 {
+    font-size: 16px !important;
+  }
+
+  .topbar .sub {
+    font-size: 11px !important;
+    margin-top: 2px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+  }
+
+  .content {
+    padding: 16px 16px 24px 16px !important;
+  }
+
+  /* 4. Form adjustments for easy finger taps */
+  .form-grid,
+  .compact-grid,
+  .report-grid,
+  .theme-options,
+  .service-list {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .panel {
+    padding: 18px !important;
+  }
+
+  .panel-desc {
+    margin-bottom: 16px !important;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    padding: 11px 14px !important;
+    font-size: 13.5px !important;
+  }
+
+  /* Actions bars stack vertically or align */
+  .form-actions {
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+    margin-top: 20px !important;
+  }
+
+  .form-actions .btn {
+    width: 100% !important;
+  }
+
+  /* 5. Customers List adapt */
+  .customer-view {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .customer-stats {
+    width: 100% !important;
+    margin-top: 0 !important;
+  }
+
+  .customer-actions {
+    width: 100% !important;
+    justify-content: flex-end !important;
+    margin-top: 4px !important;
+  }
+
+  /* 6. Job view adapt */
+  .lookup-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .lookup-row input {
+    width: 100% !important;
+  }
+
+  .lookup-row .btn {
+    width: 100% !important;
+  }
+
+  .add-custom-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .add-custom-row input.item-price {
+    width: 100% !important;
+  }
+
+  .add-custom-row button {
+    width: 100% !important;
+    padding: 11px 0 !important;
+  }
+
+  .recent-row {
+    padding: 12px 14px !important;
+  }
+
+  /* 7. Theme Select grid */
+  .theme-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 8. Full-screen Dialogs (e.g. QR modal) */
+  .qr-card {
+    padding: 24px !important;
+    width: 320px !important;
+  }
+}
+
