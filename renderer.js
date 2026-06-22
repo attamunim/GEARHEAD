@@ -74,6 +74,7 @@ function showScreen(target) {
   if (target === 'bill') loadRecentBills();
   if (target === 'reminders') loadReminders();
   if (target === 'reports') loadReports();
+  if (target === 'settings') loadSettingsCatalog();
 }
 
 function wireIntakeForm() {
@@ -106,10 +107,14 @@ function wireIntakeForm() {
 }
 
 function wireJobForm() {
-  document.getElementById('job_searchBtn').addEventListener('click', findCustomers);
-  document.getElementById('job_search').addEventListener('keydown', (event) => {
+  const searchInput = document.getElementById('job_search');
+  searchInput.addEventListener('click', findCustomers);
+  searchInput.addEventListener('input', findCustomers);
+  searchInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') findCustomers();
   });
+  
+  document.getElementById('job_searchBtn').addEventListener('click', findCustomers);
   document.getElementById('job_addCustomBtn').addEventListener('click', addCustomItem);
   document.getElementById('job_saveDraft').addEventListener('click', saveJobDraft);
   document.getElementById('job_completeBtn').addEventListener('click', completeJob);
@@ -129,6 +134,15 @@ function wireCustomerScreen() {
 
     if (action === 'report') {
       await loadCustomerReport(id);
+      return;
+    }
+
+    if (action === 'create-job') {
+      const customer = allCustomers.find((c) => c.id === id);
+      if (customer) {
+        await selectCustomer(customer);
+        showScreen('job');
+      }
       return;
     }
 
@@ -185,6 +199,8 @@ function wireSettings() {
   });
 
   loadAutoBackupStatus();
+  wireSettingsCatalogForm();
+  loadSettingsCatalog();
 }
 
 function applySavedTheme() {
@@ -244,9 +260,21 @@ function renderCustomers() {
         <div class="customer-main">
           <div class="customer-name">${escapeHtml(customer.name)}</div>
           <div class="customer-meta">${escapeHtml(customer.bike_number)} | ${escapeHtml(customer.mobile)}</div>
-          <div class="customer-sub">${Number(customer.visit_count) || 0} visits | Last: ${formatDateTime(customer.last_visit_at) || 'No job yet'} | Rs ${Number(customer.total_spent).toLocaleString()}</div>
+          <div class="customer-sub">Last Visit: ${formatDateTime(customer.last_visit_at) || 'No job yet'}</div>
+          ${customer.note ? `<div class="customer-sub" style="margin-top: 4px; font-style: italic; color: var(--steel-400);">Note: ${escapeHtml(customer.note)}</div>` : ''}
+        </div>
+        <div class="customer-stats">
+          <div class="stat-pill visits-stat">
+            <span class="stat-num">${Number(customer.visit_count) || 0}</span>
+            <span class="stat-label">visits</span>
+          </div>
+          <div class="stat-pill spent-stat">
+            <span class="stat-num">Rs ${Number(customer.total_spent).toLocaleString()}</span>
+            <span class="stat-label">spent</span>
+          </div>
         </div>
         <div class="customer-actions">
+          <button class="btn btn-primary btn-small" type="button" data-action="create-job">Create Job</button>
           <button class="btn btn-ghost btn-small" type="button" data-action="report">Report</button>
           <button class="btn btn-ghost btn-small" type="button" data-action="edit">Edit</button>
           <button class="btn btn-danger btn-small" type="button" data-action="delete">Delete</button>
@@ -367,8 +395,28 @@ async function loadCatalog() {
 
 function renderCatalog() {
   const list = document.getElementById('job_serviceList');
-  list.innerHTML = catalog.map((item) => serviceRow(item.name, item.price)).join('');
+  if (!list) return;
 
+  // 1. Get currently checked service names and their modified prices from the UI
+  const checkedRows = Array.from(list.querySelectorAll('.service-row'))
+    .filter(row => row.querySelector('input[type="checkbox"]').checked);
+  
+  const checkedPrices = {};
+  const checkedNames = checkedRows.map(row => {
+    const name = row.querySelector('input[type="checkbox"]').dataset.name;
+    const priceInput = row.querySelector('.service-price');
+    checkedPrices[name] = priceInput ? (Number(priceInput.value) || 0) : 0;
+    return name;
+  });
+
+  // 2. Render catalog items, preserving checks and edited prices
+  list.innerHTML = catalog.map((item) => {
+    const isChecked = checkedNames.includes(item.name);
+    const currentPrice = isChecked ? checkedPrices[item.name] : item.price;
+    return serviceRow(item.name, currentPrice, isChecked);
+  }).join('');
+
+  // 3. Re-bind event listeners
   list.querySelectorAll('.service-row input').forEach((input) => {
     input.addEventListener('input', updateRunningTotal);
   });
@@ -383,13 +431,13 @@ function renderCatalog() {
   updateRunningTotal();
 }
 
-function serviceRow(name, price) {
+function serviceRow(name, price, isChecked = false) {
   return `
-    <label class="service-row">
-      <input type="checkbox" data-name="${escapeAttr(name)}">
+    <label class="service-row${isChecked ? ' checked' : ''}">
+      <input type="checkbox" data-name="${escapeAttr(name)}"${isChecked ? ' checked' : ''}>
       <span class="service-name">${escapeHtml(name)}</span>
       <span class="service-price-wrap">
-        <input class="service-price" type="text" inputmode="numeric" value="${Number(price) || 0}">
+        <input class="service-price" type="text" inputmode="numeric" value="00">
       </span>
     </label>
   `;
@@ -397,10 +445,14 @@ function serviceRow(name, price) {
 
 async function findCustomers() {
   const query = value('job_search');
-  if (!query) return;
+  const results = document.getElementById('job_searchResults');
+  
+  if (!query) {
+    results.innerHTML = '';
+    return;
+  }
 
   const customers = await api.customer.find(query);
-  const results = document.getElementById('job_searchResults');
 
   results.innerHTML = customers.map((customer) => `
     <div class="search-result-item" data-id="${customer.id}">
@@ -450,12 +502,17 @@ function addCustomItem() {
   catalog.push({ name, price });
   document.getElementById('job_customName').value = '';
   document.getElementById('job_customPrice').value = '';
+  
+  // Render catalog, keeping all previously checked items checked!
   renderCatalog();
 
+  // Check the new item at the bottom (so the added item is selected immediately)
   const rows = document.querySelectorAll('#job_serviceList .service-row');
-  const row = rows[rows.length - 1];
-  row.querySelector('input[type="checkbox"]').checked = true;
-  row.classList.add('checked');
+  const lastRow = rows[rows.length - 1];
+  if (lastRow) {
+    lastRow.querySelector('input[type="checkbox"]').checked = true;
+    lastRow.classList.add('checked');
+  }
   updateRunningTotal();
 }
 
@@ -639,6 +696,114 @@ async function loadReminders() {
   });
 }
 
+function wireSettingsCatalogForm() {
+  const form = document.getElementById('catalogForm');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = value('cat_name');
+    const price = Number(value('cat_price')) || 0;
+    
+    if (!name) return;
+
+    await api.catalog.add({ name, price });
+    form.reset();
+    toast('Service added to catalog');
+    await loadSettingsCatalog();
+    if (document.getElementById('screen-job').classList.contains('active')) {
+      await loadCatalog();
+    }
+  });
+}
+
+async function loadSettingsCatalog() {
+  const list = document.getElementById('catalogList');
+  if (!list) return;
+
+  const catalogItems = await api.catalog.list();
+  
+  list.innerHTML = catalogItems.map(item => `
+    <div class="catalog-item-row" data-id="${item.id}">
+      <div class="cat-info">
+        <span class="cat-name">${escapeHtml(item.name)}</span>
+        <span class="cat-price">Rs ${Number(item.price).toLocaleString()}</span>
+      </div>
+      <div class="cat-edit-fields" style="display: none;">
+        <input class="item-name" type="text" data-field="name" value="${escapeAttr(item.name)}">
+        <input class="item-price" type="text" data-field="price" value="${Number(item.price)}" inputmode="numeric">
+      </div>
+      <div class="cat-actions">
+        <button class="btn btn-ghost btn-small cat-edit-btn" type="button">Edit</button>
+        <button class="btn btn-primary btn-small cat-save-btn" type="button" style="display: none;">Save</button>
+        <button class="btn btn-ghost btn-small cat-cancel-btn" type="button" style="display: none;">Cancel</button>
+        <button class="btn btn-danger btn-small cat-delete-btn" type="button">Delete</button>
+      </div>
+    </div>
+  `).join('') || '<div class="empty-note">No services in the catalog.</div>';
+
+  list.querySelectorAll('.catalog-item-row').forEach(row => {
+    const id = Number(row.dataset.id);
+    const editBtn = row.querySelector('.cat-edit-btn');
+    const saveBtn = row.querySelector('.cat-save-btn');
+    const cancelBtn = row.querySelector('.cat-cancel-btn');
+    const deleteBtn = row.querySelector('.cat-delete-btn');
+    const infoDiv = row.querySelector('.cat-info');
+    const editDiv = row.querySelector('.cat-edit-fields');
+
+    editBtn.addEventListener('click', () => {
+      row.classList.add('editing');
+      infoDiv.style.display = 'none';
+      editDiv.style.display = 'flex';
+      editBtn.style.display = 'none';
+      deleteBtn.style.display = 'none';
+      saveBtn.style.display = '';
+      cancelBtn.style.display = '';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      row.classList.remove('editing');
+      infoDiv.style.display = 'flex';
+      editDiv.style.display = 'none';
+      editBtn.style.display = '';
+      deleteBtn.style.display = '';
+      saveBtn.style.display = 'none';
+      cancelBtn.style.display = 'none';
+    });
+
+    saveBtn.addEventListener('click', async () => {
+      const nameInput = editDiv.querySelector('[data-field="name"]');
+      const priceInput = editDiv.querySelector('[data-field="price"]');
+      const name = nameInput.value.trim();
+      const price = Number(priceInput.value) || 0;
+
+      if (!name) {
+        toast('Service name is required');
+        return;
+      }
+
+      await api.catalog.update({ id, name, price });
+      toast('Service updated');
+      await loadSettingsCatalog();
+      if (document.getElementById('screen-job').classList.contains('active')) {
+        await loadCatalog();
+      }
+    });
+
+    deleteBtn.addEventListener('click', async () => {
+      const name = infoDiv.querySelector('.cat-name').textContent;
+      const ok = confirm(`Delete "${name}" from the global catalog?`);
+      if (!ok) return;
+
+      await api.catalog.delete(id);
+      toast('Service deleted');
+      await loadSettingsCatalog();
+      if (document.getElementById('screen-job').classList.contains('active')) {
+        await loadCatalog();
+      }
+    });
+  });
+}
+
 function fillCurrentDateTime() {
   const now = new Date();
   const date = now.toLocaleDateString();
@@ -672,6 +837,7 @@ function value(id) {
   return document.getElementById(id).value.trim();
 }
 
+// Generates initials (limit 2 chars max) from customer name
 function initials(name) {
   return String(name || 'GH')
     .split(/\s+/)
@@ -709,4 +875,217 @@ function escapeHtml(value) {
 
 function escapeAttr(value) {
   return escapeHtml(value).replace(/`/g, '&#96;');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOBILE ACCESS — QR CODE FEATURE
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Only available when running inside Electron (window.gearhead.webserver exists)
+const isElectron = !!(window.gearhead && window.gearhead.webserver);
+
+let _serverInfo = null;          // cached server info { localUrl, tunnelUrl, running }
+let qrLanInstance     = null;    // QRCode instance for LAN tab
+let qrTunnelInstance  = null;    // QRCode instance for tunnel tab
+let qrLanUrl          = null;    // last URL rendered into LAN canvas
+let qrTunnelUrl       = null;    // last URL rendered into tunnel canvas
+
+// ── Wire up the settings panel buttons ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isElectron) return;
+
+  // Show QR button → open modal
+  document.getElementById('showQrBtn').addEventListener('click', openQrModal);
+
+  // Copy LAN link
+  document.getElementById('copyLocalUrl').addEventListener('click', async () => {
+    const info = await fetchServerInfo();
+    if (info && info.localUrl) {
+      copyToClipboard(info.localUrl);
+      toast('LAN link copied!');
+    } else {
+      toast('Server not running yet');
+    }
+  });
+
+  // Copy tunnel link
+  document.getElementById('copyTunnelUrl').addEventListener('click', async () => {
+    const info = await fetchServerInfo();
+    if (info && info.tunnelUrl) {
+      copyToClipboard(info.tunnelUrl);
+      toast('Cellular link copied!');
+    } else {
+      toast('Tunnel not available — check internet connection');
+    }
+  });
+
+  // Poll server info every 4 s so the status dot stays up to date
+  pollServerInfo();
+  setInterval(pollServerInfo, 4000);
+});
+
+// ── QR Modal wiring ──────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const modal    = document.getElementById('qrModal');
+  const backdrop = document.getElementById('qrBackdrop');
+  const closeBtn = document.getElementById('qrClose');
+  const tabLan   = document.getElementById('tabLan');
+  const tabTunnel= document.getElementById('tabTunnel');
+  const paneLan  = document.getElementById('pane-lan');
+  const paneTunnel = document.getElementById('pane-tunnel');
+
+  if (!modal) return;
+
+  // Close on backdrop / close-button / Escape
+  backdrop.addEventListener('click', closeQrModal);
+  closeBtn.addEventListener('click', closeQrModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQrModal(); });
+
+  // Tab switching
+  tabLan.addEventListener('click', () => switchQrTab('lan'));
+  tabTunnel.addEventListener('click', () => switchQrTab('tunnel'));
+
+  // Copy buttons inside modal
+  document.getElementById('copyLanBtn').addEventListener('click', async () => {
+    const info = _serverInfo;
+    if (info && info.localUrl) { copyToClipboard(info.localUrl); toast('LAN link copied!'); }
+  });
+  document.getElementById('copyTunnelBtn').addEventListener('click', async () => {
+    const info = _serverInfo;
+    if (info && info.tunnelUrl) { copyToClipboard(info.tunnelUrl); toast('Cellular link copied!'); }
+  });
+});
+
+function openQrModal() {
+  const modal = document.getElementById('qrModal');
+  if (!modal) return;
+  modal.style.display = '';
+  renderQrCodes();
+}
+
+function closeQrModal() {
+  const modal = document.getElementById('qrModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function switchQrTab(tab) {
+  const isLan = (tab === 'lan');
+  document.getElementById('tabLan').classList.toggle('active', isLan);
+  document.getElementById('tabTunnel').classList.toggle('active', !isLan);
+  document.getElementById('pane-lan').style.display = isLan ? '' : 'none';
+  document.getElementById('pane-tunnel').style.display = isLan ? 'none' : '';
+}
+
+// ── Fetch + cache server info ─────────────────────────────────────────────────
+async function fetchServerInfo() {
+  if (!isElectron) return null;
+  try {
+    _serverInfo = await api.webserver.info();
+    return _serverInfo;
+  } catch (err) {
+    console.warn('[QR] Could not get server info:', err);
+    return null;
+  }
+}
+
+async function pollServerInfo() {
+  const info = await fetchServerInfo();
+  updateMobileStatusUI(info);
+}
+
+function updateMobileStatusUI(info) {
+  const dot  = document.getElementById('mobileStatusDot');
+  const text = document.getElementById('mobileStatusText');
+  const note = document.getElementById('mobileAccessNote');
+  if (!dot || !text) return;
+
+  if (!info || !info.running) {
+    dot.className  = 'mobile-status-dot dot-off';
+    text.textContent = 'Server not running';
+    return;
+  }
+
+  dot.className  = 'mobile-status-dot dot-on';
+  const parts = [];
+  if (info.localUrl)  parts.push(`LAN: ${info.localUrl}`);
+  if (info.tunnelUrl) parts.push(`Cellular: ${info.tunnelUrl}`);
+  text.textContent = parts.join('  •  ') || 'Running…';
+
+  if (note) {
+    if (!info.tunnelUrl) {
+      note.textContent = '⚠ Cellular tunnel unavailable — check internet. LAN link still works on same Wi-Fi.';
+    } else {
+      note.textContent = 'LAN link: same Wi-Fi only.  Cellular link: works anywhere worldwide.';
+    }
+  }
+}
+
+// ── Render QR codes ──────────────────────────────────────────────────────────
+async function renderQrCodes() {
+  const info = await fetchServerInfo();
+  if (!info) return;
+
+  const subtitle = document.getElementById('qrSubtitle');
+
+  // LAN QR
+  const lanBox = document.getElementById('qrCodeLan');
+  const urlLanEl = document.getElementById('urlLan');
+  if (info.localUrl) {
+    if (qrLanUrl !== info.localUrl) {
+      lanBox.innerHTML = '';
+      qrLanInstance = new QRCode(lanBox, {
+        text: info.localUrl,
+        width: 220, height: 220,
+        colorDark: '#0f172a', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M,
+      });
+      qrLanUrl = info.localUrl;
+    }
+    urlLanEl.textContent = info.localUrl;
+  } else {
+    lanBox.innerHTML = '<div class="qr-unavail">Server not running</div>';
+    urlLanEl.textContent = '—';
+  }
+
+  // Tunnel QR
+  const tunnelBox = document.getElementById('qrCodeTunnel');
+  const urlTunnelEl = document.getElementById('urlTunnel');
+  if (info.tunnelUrl) {
+    if (qrTunnelUrl !== info.tunnelUrl) {
+      tunnelBox.innerHTML = '';
+      qrTunnelInstance = new QRCode(tunnelBox, {
+        text: info.tunnelUrl,
+        width: 220, height: 220,
+        colorDark: '#0f172a', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M,
+      });
+      qrTunnelUrl = info.tunnelUrl;
+    }
+    urlTunnelEl.textContent = info.tunnelUrl;
+    if (subtitle) subtitle.textContent = 'Scan with your phone camera to open';
+  } else {
+    tunnelBox.innerHTML = '<div class="qr-unavail">Tunnel unavailable — no internet or service limit reached</div>';
+    urlTunnelEl.textContent = '—';
+    if (subtitle) subtitle.textContent = 'LAN tab available · Cellular tunnel offline';
+  }
+}
+
+// ── Clipboard helper ─────────────────────────────────────────────────────────
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  ta.remove();
 }

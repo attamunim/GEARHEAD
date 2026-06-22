@@ -5,6 +5,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const webServer = require('./web-server');
 
 let mainWindow;
 let queries; // loaded after app is ready, since db.js needs app.getPath()
@@ -35,13 +36,17 @@ function createWindow() {
   // mainWindow.webContents.openDevTools();
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // db.js requires `app` to already be ready (for app.getPath('userData')).
   ({ queries, backupTo, restoreFrom } = require('./db'));
   appSettings = loadAppSettings();
   registerIpcHandlers();
   scheduleDailyBackup();
   createWindow();
+
+  // Start the local web server so the app is accessible from phones.
+  webServer.setQueries(queries);
+  webServer.startServer().catch((err) => console.error('[web-server] Failed to start:', err));
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -52,10 +57,16 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+app.on('before-quit', async () => {
+  await webServer.stopServer();
+});
+
 function registerIpcHandlers() {
   // ---- service catalogue ----
   ipcMain.handle('catalog:list', () => queries.getServiceCatalog());
   ipcMain.handle('catalog:add', (e, { name, price }) => queries.addServiceCatalogItem(name, price));
+  ipcMain.handle('catalog:update', (e, { id, name, price }) => queries.updateServiceCatalogItem(id, name, price));
+  ipcMain.handle('catalog:delete', (e, id) => queries.deleteServiceCatalogItem(id));
 
   // ---- customers ----
   ipcMain.handle('customer:create', (e, payload) => queries.createCustomer(payload));
@@ -136,6 +147,22 @@ function registerIpcHandlers() {
     if (!digits) return false;
     shell.openExternal(`tel:${digits}`);
     return true;
+  });
+
+  // ---- web / mobile access ----
+  ipcMain.handle('webserver:info', () => webServer.getServerInfo());
+
+  ipcMain.handle('webserver:start', async () => {
+    try {
+      return await webServer.startServer();
+    } catch (err) {
+      return { running: false, error: String(err.message || err) };
+    }
+  });
+
+  ipcMain.handle('webserver:stop', async () => {
+    await webServer.stopServer();
+    return webServer.getServerInfo();
   });
 }
 

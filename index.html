@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>GEARHEAD — Bike Service</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' http://localhost:*">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- QRCode.js for rendering QR codes in the desktop renderer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -265,6 +267,21 @@
         </div>
 
         <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">Manage Service Catalog</div>
+          <div class="panel-desc">Add, edit, or remove services and standard prices available for jobs.</div>
+          
+          <form id="catalogForm" class="add-custom-row" style="margin-bottom: 20px;">
+            <input class="item-name" type="text" id="cat_name" placeholder="New service name (e.g. Carburetor Cleaning)" required>
+            <input class="item-price" type="text" id="cat_price" placeholder="Rs price" inputmode="numeric" required>
+            <button class="btn btn-primary" style="white-space: nowrap;" type="submit">Add Service</button>
+          </form>
+
+          <div id="catalogList" class="catalog-manager-list">
+            <!-- Dynamically filled with services -->
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
           <div class="panel-title">Backup & Restore</div>
           <div class="panel-desc">Save a copy of shop data, or restore from an older backup file.</div>
           <div class="form-actions settings-actions">
@@ -274,12 +291,65 @@
           </div>
           <div class="empty-note" id="backupStatus">Backup files contain customers, jobs, bills, services, and reminders.</div>
         </div>
-      </div>
 
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title">📱 Mobile &amp; Phone Access</div>
+          <div class="panel-desc">Access GEARHEAD from your phone — scan the QR code or open the link directly.</div>
+          <div id="mobileAccessStatus" class="mobile-status-row">
+            <span class="mobile-status-dot" id="mobileStatusDot"></span>
+            <span id="mobileStatusText">Starting server…</span>
+          </div>
+          <div class="form-actions settings-actions" style="margin-top:12px;">
+            <button class="btn btn-primary" type="button" id="showQrBtn">📷 Show QR Code</button>
+            <button class="btn btn-ghost" type="button" id="copyLocalUrl">Copy LAN Link</button>
+            <button class="btn btn-ghost" type="button" id="copyTunnelUrl">Copy Cellular Link</button>
+          </div>
+          <div class="empty-note" id="mobileAccessNote" style="margin-top:10px;">
+            Devices on the same Wi-Fi use the LAN link. The Cellular link works anywhere in the world.
+          </div>
+        </div>
+
+      </div>
     </div>
   </main>
 </div>
 
 <script src="renderer.js"></script>
+
+<!-- ===================== QR MODAL ===================== -->
+<div id="qrModal" class="qr-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Mobile Access QR Code">
+  <div class="qr-backdrop" id="qrBackdrop"></div>
+  <div class="qr-card">
+    <button class="qr-close" id="qrClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="qr-header">
+      <div class="brand-mark qr-brand-mark"></div>
+      <div>
+        <div class="qr-title">GEARHEAD Mobile</div>
+        <div class="qr-subtitle" id="qrSubtitle">Scan to open on your phone</div>
+      </div>
+    </div>
+
+    <div class="qr-tabs">
+      <button class="qr-tab active" id="tabLan" data-tab="lan">📶 Same Wi-Fi (LAN)</button>
+      <button class="qr-tab" id="tabTunnel" data-tab="tunnel">🌐 Cellular / Anywhere</button>
+    </div>
+
+    <div class="qr-pane" id="pane-lan">
+      <div id="qrCodeLan" class="qr-code-box"></div>
+      <div class="qr-url" id="urlLan">—</div>
+      <button class="btn btn-ghost btn-small" id="copyLanBtn" style="margin-top:10px;">Copy Link</button>
+    </div>
+
+    <div class="qr-pane" id="pane-tunnel" style="display:none;">
+      <div id="qrCodeTunnel" class="qr-code-box"></div>
+      <div class="qr-url" id="urlTunnel">—</div>
+      <button class="btn btn-ghost btn-small" id="copyTunnelBtn" style="margin-top:10px;">Copy Link</button>
+      <div class="qr-tunnel-note">Powered by localtunnel. Works over cellular data worldwide. First visit may show a tunnel warning page — just click Continue.</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

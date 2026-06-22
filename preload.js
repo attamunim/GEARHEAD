@@ -4,6 +4,8 @@ contextBridge.exposeInMainWorld('gearhead', {
   catalog: {
     list: () => ipcRenderer.invoke('catalog:list'),
     add: (payload) => ipcRenderer.invoke('catalog:add', payload),
+    update: (payload) => ipcRenderer.invoke('catalog:update', payload),
+    delete: (id) => ipcRenderer.invoke('catalog:delete', id),
   },
   customer: {
     create: (payload) => ipcRenderer.invoke('customer:create', payload),
@@ -41,5 +43,10 @@ contextBridge.exposeInMainWorld('gearhead', {
   },
   phone: {
     call: (mobile) => ipcRenderer.invoke('phone:call', mobile),
+  },
+  webserver: {
+    info:  ()  => ipcRenderer.invoke('webserver:info'),
+    start: ()  => ipcRenderer.invoke('webserver:start'),
+    stop:  ()  => ipcRenderer.invoke('webserver:stop'),
   },
 });

@@ -116,6 +116,16 @@ const queries = {
     return stmt.run(name, price);
   },
 
+  updateServiceCatalogItem(id, name, price) {
+    const stmt = db.prepare('UPDATE service_catalog SET name = ?, price = ? WHERE id = ?');
+    return stmt.run(name, price, id);
+  },
+
+  deleteServiceCatalogItem(id) {
+    const stmt = db.prepare('DELETE FROM service_catalog WHERE id = ?');
+    return stmt.run(id);
+  },
+
   // ---- customers / intake ----
   createCustomer({ name, bike_number, mobile, meter_reading, note }) {
     const stmt = db.prepare(`
