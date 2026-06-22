@@ -39,7 +39,7 @@ async function startServer() {
   if (server) return getServerInfo();
 
   const app = express();
-  app.use(express.json());
+  app.use(express.json({ strict: false }));
 
   // ── Static files ──────────────────────────────────────────────────────
   const root = __dirname;
@@ -199,11 +199,12 @@ function buildApiShim() {
   'use strict';
 
   async function call(resource, action, payload) {
-    const res = await fetch('/api/' + resource + '/' + action, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload === undefined ? null : payload),
-    });
+    const opts = { method: 'POST', headers: {} };
+    if (payload !== undefined) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(payload);
+    }
+    const res = await fetch('/api/' + resource + '/' + action, opts);
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'API error');
     return data.result;
