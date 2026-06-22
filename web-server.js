@@ -35,7 +35,7 @@ function setQueries(queries) {
  * Start the Express server + optionally a localtunnel for cellular access.
  * Returns an object with { localUrl, tunnelUrl }.
  */
-async function startServer() {
+async function startServer(subdomain) {
   if (server) return getServerInfo();
 
   const app = express();
@@ -100,7 +100,11 @@ async function startServer() {
   // ── Start localtunnel (best-effort, don't crash if it fails) ─────────
   try {
     const localtunnel = require('localtunnel');
-    tunnelClient = await localtunnel({ port: PORT, subdomain: 'gearhead-shop' });
+    const options = { port: PORT };
+    if (subdomain) {
+      options.subdomain = subdomain;
+    }
+    tunnelClient = await localtunnel(options);
     console.log(`[web-server] Tunnel URL: ${tunnelClient.url}`);
     tunnelClient.on('error', (err) => console.error('[localtunnel] error:', err));
     tunnelClient.on('close', () => { tunnelClient = null; });

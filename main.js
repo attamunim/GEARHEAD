@@ -40,13 +40,26 @@ app.whenReady().then(async () => {
   // db.js requires `app` to already be ready (for app.getPath('userData')).
   ({ queries, backupTo, restoreFrom } = require('./db'));
   appSettings = loadAppSettings();
+
+  // Generate a persistent, unique subdomain for this machine if not set.
+  // This guarantees the user gets the exact same cellular link URL on every single run.
+  if (!appSettings.mobileSubdomain) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let suffix = '';
+    for (let i = 0; i < 10; i++) {
+      suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    appSettings.mobileSubdomain = `gearhead-${suffix}`;
+    saveAppSettings();
+  }
+
   registerIpcHandlers();
   scheduleDailyBackup();
   createWindow();
 
   // Start the local web server so the app is accessible from phones.
   webServer.setQueries(queries);
-  webServer.startServer().catch((err) => console.error('[web-server] Failed to start:', err));
+  webServer.startServer(appSettings.mobileSubdomain).catch((err) => console.error('[web-server] Failed to start:', err));
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -154,7 +167,7 @@ function registerIpcHandlers() {
 
   ipcMain.handle('webserver:start', async () => {
     try {
-      return await webServer.startServer();
+      return await webServer.startServer(appSettings.mobileSubdomain);
     } catch (err) {
       return { running: false, error: String(err.message || err) };
     }
