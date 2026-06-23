@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GEARHEAD — Bike Service</title>
+<title>HAMZA HONDA — Bike Service</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' http://localhost:*">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <!-- QRCode.js for rendering QR codes in the desktop renderer -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -20,49 +20,49 @@
     <div class="brand">
       <div class="brand-mark"></div>
       <div class="brand-text">
-        <span class="name">GEARHEAD</span>
-        <span class="tag">Bike Service</span>
+        <span class="name" data-i18n="brand_name">GEARHEAD</span>
+        <span class="tag" data-i18n="brand_tag">Bike Service</span>
       </div>
     </div>
 
     <div class="nav-group">
       <div class="nav-item active" data-screen="intake">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
-        New Customer
+        <span data-i18n="nav_intake">New Customer</span>
       </div>
       <div class="nav-item" data-screen="customers">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Customers
+        <span data-i18n="nav_customers">Customers</span>
       </div>
       <div class="nav-item" data-screen="job">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>
-        Add Job / Repair
+        <span data-i18n="nav_job">Add Job / Repair</span>
         <span class="nav-badge" id="activeJobsBadge" style="display:none;">0</span>
       </div>
       <div class="nav-item" data-screen="bill">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Bills
+        <span data-i18n="nav_bill">Bills</span>
       </div>
       <div class="nav-item" data-screen="reminders">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Reminders
+        <span data-i18n="nav_reminders">Reminders</span>
         <span class="nav-badge" id="reminderBadge" style="display:none;">0</span>
       </div>
       <div class="nav-item" data-screen="reports">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 5-7"/></svg>
-        Reports
+        <span data-i18n="nav_reports">Reports</span>
       </div>
       <div class="nav-item" data-screen="settings">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.38.55.72 1 .9.33.14.7.1 1.1.1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
-        Settings
+        <span data-i18n="nav_settings">Settings</span>
       </div>
     </div>
 
     <div class="sidebar-foot">
       <div class="mech-avatar">RK</div>
       <div class="mech-meta">
-        <div class="mname">Shop Owner</div>
-        <div class="mrole">GEARHEAD</div>
+        <div class="mname" data-i18n="sidebar_owner">Shop Owner</div>
+        <div class="mrole" data-i18n="sidebar_role">GEARHEAD</div>
       </div>
     </div>
   </aside>
@@ -72,9 +72,11 @@
 
     <div class="topbar">
       <div>
-        <h1 id="topbarTitle">New Customer Intake</h1>
-        <div class="sub" id="topbarSub">When a bike arrives at the shop, log it here first</div>
+        <h1 id="topbarTitle" data-i18n="topbar_intake">New Customer Intake</h1>
+        <div class="sub" id="topbarSub" data-i18n="topbar_intake_sub">When a bike arrives at the shop, log it here first</div>
       </div>
+      <!-- Language Toggle Button -->
+      <button class="btn btn-ghost btn-small lang-toggle" id="langToggleBtn" type="button" data-i18n="lang_btn">اردو</button>
     </div>
 
     <div class="content">
@@ -82,51 +84,51 @@
       <!-- ===== SCREEN 1: NEW CUSTOMER / BIKE INTAKE ===== -->
       <div class="screen active" id="screen-intake">
         <div class="panel">
-          <div class="panel-title">Customer & Bike Details</div>
-          <div class="panel-desc">Fill this in once when the bike comes in. Date & time are stamped automatically.</div>
+          <div class="panel-title" data-i18n="intake_panel_title">Customer &amp; Bike Details</div>
+          <div class="panel-desc" data-i18n="intake_panel_desc">Fill this in once when the bike comes in. Date &amp; time are stamped automatically.</div>
 
           <form id="intakeForm">
             <div class="form-grid">
               <div class="field">
-                <label>Customer Name</label>
-                <input type="text" id="in_name" placeholder="e.g. Bilal Ahmed" required>
+                <label data-i18n="lbl_name">Customer Name</label>
+                <input type="text" id="in_name" data-i18n-placeholder="ph_name" placeholder="e.g. Bilal Ahmed" required>
               </div>
               <div class="field mono">
-                <label>Bike Number</label>
-                <input type="text" id="in_bike" placeholder="e.g. LEF-19-4471" required>
+                <label data-i18n="lbl_bike">Bike Number</label>
+                <input type="text" id="in_bike" data-i18n-placeholder="ph_bike" placeholder="e.g. LEF-19-4471" required>
               </div>
               <div class="field mono">
-                <label>Mobile Number</label>
-                <input type="text" id="in_mobile" placeholder="e.g. 0301-2345678" required>
+                <label data-i18n="lbl_mobile">Mobile Number</label>
+                <input type="text" id="in_mobile" data-i18n-placeholder="ph_mobile" placeholder="e.g. 0301-2345678" required>
               </div>
               <div class="field mono">
-                <label>Meter Reading (km)</label>
-                <input type="text" id="in_meter" placeholder="e.g. 14820" inputmode="numeric">
+                <label data-i18n="lbl_meter">Meter Reading (km)</label>
+                <input type="text" id="in_meter" data-i18n-placeholder="ph_meter" placeholder="e.g. 14820" inputmode="numeric">
               </div>
               <div class="field locked mono">
-                <label>Date <span class="auto-tag">auto</span></label>
+                <label><span data-i18n="lbl_date">Date</span> <span class="auto-tag" data-i18n="auto_tag">auto</span></label>
                 <input type="text" id="in_date" readonly>
               </div>
               <div class="field locked mono">
-                <label>Time <span class="auto-tag">auto</span></label>
+                <label><span data-i18n="lbl_time">Time</span> <span class="auto-tag" data-i18n="auto_tag">auto</span></label>
                 <input type="text" id="in_time" readonly>
               </div>
               <div class="field full">
-                <label>What's it in for? <span class="auto-tag">optional note</span></label>
-                <textarea rows="2" id="in_note" placeholder="e.g. Strange noise from engine, brakes feel loose…"></textarea>
+                <label><span data-i18n="lbl_note">What's it in for?</span> <span class="auto-tag" data-i18n="optional_tag">optional note</span></label>
+                <textarea rows="2" id="in_note" data-i18n-placeholder="ph_note" placeholder="e.g. Strange noise from engine, brakes feel loose…"></textarea>
               </div>
             </div>
 
             <div class="form-actions">
-              <button type="button" class="btn btn-ghost" id="in_clear">Clear</button>
-              <button type="submit" class="btn btn-primary">Save Customer & Bike →</button>
+              <button type="button" class="btn btn-ghost" id="in_clear" data-i18n="btn_clear">Clear</button>
+              <button type="submit" class="btn btn-primary" data-i18n="btn_save_customer">Save Customer &amp; Bike →</button>
             </div>
           </form>
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">Recently Added</div>
-          <div class="panel-desc">Last few customers logged in.</div>
+          <div class="panel-title" data-i18n="recent_added_title">Recently Added</div>
+          <div class="panel-desc" data-i18n="recent_added_desc">Last few customers logged in.</div>
           <div id="recentCustomers" class="recent-list"></div>
         </div>
       </div>
@@ -134,20 +136,20 @@
       <!-- ===== SCREEN 2: CUSTOMERS ===== -->
       <div class="screen" id="screen-customers">
         <div class="panel">
-          <div class="panel-title">All Customers</div>
-          <div class="panel-desc">View, update, delete, and open each customer's visit report.</div>
+          <div class="panel-title" data-i18n="customers_panel_title">All Customers</div>
+          <div class="panel-desc" data-i18n="customers_panel_desc">View, update, delete, and open each customer's visit report.</div>
 
           <div class="lookup-row">
-            <input type="text" id="customer_filter" placeholder="Filter by name, bike number, or mobile...">
-            <button class="btn btn-ghost" id="customer_refresh">Refresh</button>
+            <input type="text" id="customer_filter" data-i18n-placeholder="ph_customer_filter" placeholder="Filter by name, bike number, or mobile...">
+            <button class="btn btn-ghost" id="customer_refresh" data-i18n="btn_refresh">Refresh</button>
           </div>
 
           <div id="customerList" class="customer-list"></div>
         </div>
 
         <div class="panel" id="customerReportPanel" style="display:none; margin-top:18px;">
-          <div class="panel-title">Customer Report</div>
-          <div class="panel-desc">Visit count with date and time for every recorded job.</div>
+          <div class="panel-title" data-i18n="customer_report_title">Customer Report</div>
+          <div class="panel-desc" data-i18n="customer_report_desc">Visit count with date and time for every recorded job.</div>
           <div id="customerReport"></div>
         </div>
       </div>
@@ -155,12 +157,12 @@
       <!-- ===== SCREEN 3: ADD JOB / REPAIR DONE ===== -->
       <div class="screen" id="screen-job">
         <div class="panel">
-          <div class="panel-title">Add Job — What Was Done</div>
-          <div class="panel-desc">Find the customer by bike number or mobile, then log what work was completed.</div>
+          <div class="panel-title" data-i18n="job_panel_title">Add Job — What Was Done</div>
+          <div class="panel-desc" data-i18n="job_panel_desc">Find the customer by bike number or mobile, then log what work was completed.</div>
 
           <div class="lookup-row">
-            <input type="text" id="job_search" placeholder="Search by bike number, mobile, or name…">
-            <button class="btn btn-ghost" id="job_searchBtn">Find</button>
+            <input type="text" id="job_search" data-i18n-placeholder="ph_job_search" placeholder="Search by bike number, mobile, or name…">
+            <button class="btn btn-ghost" id="job_searchBtn" data-i18n="btn_find">Find</button>
           </div>
 
           <div id="job_searchResults" class="search-results"></div>
@@ -171,39 +173,39 @@
 
             <div class="form-grid" style="margin-bottom:18px;">
               <div class="field locked mono">
-                <label>Date <span class="auto-tag">auto</span></label>
+                <label><span data-i18n="lbl_date">Date</span> <span class="auto-tag" data-i18n="auto_tag">auto</span></label>
                 <input type="text" id="job_date" readonly>
               </div>
               <div class="field locked mono">
-                <label>Time <span class="auto-tag">auto</span></label>
+                <label><span data-i18n="lbl_time">Time</span> <span class="auto-tag" data-i18n="auto_tag">auto</span></label>
                 <input type="text" id="job_time" readonly>
               </div>
             </div>
 
             <div class="field full" style="margin-bottom:10px;">
-              <label>Work Completed <span class="auto-tag">tick what was done — price auto-fills, you can edit it</span></label>
+              <label><span data-i18n="lbl_work_done">Work Completed</span> <span class="auto-tag" data-i18n="work_done_tag">tick what was done — price auto-fills, you can edit it</span></label>
             </div>
             <div class="service-list" id="job_serviceList"></div>
 
             <div class="add-custom-row">
-              <input class="item-name" type="text" id="job_customName" placeholder="+ Add a custom item (e.g. Headlight bulb)">
-              <input class="item-price" type="text" id="job_customPrice" placeholder="Rs price" inputmode="numeric">
-              <button type="button" id="job_addCustomBtn">Add</button>
+              <input class="item-name" type="text" id="job_customName" data-i18n-placeholder="ph_custom_item" placeholder="+ Add a custom item (e.g. Headlight bulb)">
+              <input class="item-price" type="text" id="job_customPrice" data-i18n-placeholder="ph_custom_price" placeholder="Rs price" inputmode="numeric">
+              <button type="button" id="job_addCustomBtn" data-i18n="btn_add">Add</button>
             </div>
 
             <div class="field full" style="margin:16px 0 10px 0;">
-              <label>Mechanic Notes <span class="auto-tag">optional</span></label>
-              <textarea rows="2" id="job_notes" placeholder="Anything worth remembering for next visit…"></textarea>
+              <label><span data-i18n="lbl_mech_notes">Mechanic Notes</span> <span class="auto-tag" data-i18n="optional_tag2">optional</span></label>
+              <textarea rows="2" id="job_notes" data-i18n-placeholder="ph_mech_notes" placeholder="Anything worth remembering for next visit…"></textarea>
             </div>
 
             <div class="total-strip">
-              <span class="total-label">Running Total</span>
+              <span class="total-label" data-i18n="lbl_running_total">Running Total</span>
               <span class="total-value" id="job_runningTotal">Rs 0</span>
             </div>
 
             <div class="form-actions" style="margin-top:18px;">
-              <button type="button" class="btn btn-ghost" id="job_saveDraft">Save Draft</button>
-              <button type="button" class="btn btn-primary" id="job_completeBtn">Mark Job Done → Generate Bill</button>
+              <button type="button" class="btn btn-ghost" id="job_saveDraft" data-i18n="btn_save_draft">Save Draft</button>
+              <button type="button" class="btn btn-primary" id="job_completeBtn" data-i18n="btn_complete_job">Mark Job Done → Generate Bill</button>
             </div>
           </div>
 
@@ -213,18 +215,18 @@
       <!-- ===== SCREEN 4: BILLS ===== -->
       <div class="screen" id="screen-bill">
         <div class="panel" id="bill_panel">
-          <div class="panel-title">Bill</div>
-          <div class="panel-desc">Generated automatically when a job is marked done.</div>
-          <div id="bill_empty" class="empty-note" style="display:none;">No bill selected yet. Complete a job, or pick one from Recent Bills below.</div>
+          <div class="panel-title" data-i18n="bill_panel_title">Bill</div>
+          <div class="panel-desc" data-i18n="bill_panel_desc">Generated automatically when a job is marked done.</div>
+          <div id="bill_empty" class="empty-note" style="display:none;" data-i18n="bill_empty">No bill selected yet. Complete a job, or pick one from Recent Bills below.</div>
           <div id="bill_preview"></div>
           <div class="form-actions" id="bill_actions" style="display:none;">
-            <button class="btn btn-ghost" id="bill_back">Back to Job</button>
-            <button class="btn btn-primary" id="bill_print">🖨 Print Bill</button>
+            <button class="btn btn-ghost" id="bill_back" data-i18n="btn_back_job">Back to Job</button>
+            <button class="btn btn-primary" id="bill_print" data-i18n="btn_print_bill">🖨 Print Bill</button>
           </div>
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">Recent Bills</div>
+          <div class="panel-title" data-i18n="recent_bills_title">Recent Bills</div>
           <div id="recentBills" class="recent-list"></div>
         </div>
       </div>
@@ -232,25 +234,25 @@
       <!-- ===== SCREEN 5: REMINDERS ===== -->
       <div class="screen" id="screen-reminders">
         <div class="panel">
-          <div class="panel-title">30-Day Service Reminders</div>
-          <div class="panel-desc">Auto-created 30 days after each customer's last completed job. Use Call when a reminder is due.</div>
+          <div class="panel-title" data-i18n="reminders_title">30-Day Service Reminders</div>
+          <div class="panel-desc" data-i18n="reminders_desc">Auto-created 30 days after each customer's last completed job. Use Call when a reminder is due.</div>
 
           <div class="reminder-list" id="reminderList"></div>
-          <div class="empty-note" id="reminder_empty" style="display:none;">No reminders due right now. Nice and quiet.</div>
-          <div class="empty-note">⏱ Reminder = last completed job date + 30 days. Updates automatically as jobs finish.</div>
+          <div class="empty-note" id="reminder_empty" style="display:none;" data-i18n="reminders_empty">No reminders due right now. Nice and quiet.</div>
+          <div class="empty-note" data-i18n="reminders_note">⏱ Reminder = last completed job date + 30 days. Updates automatically as jobs finish.</div>
         </div>
       </div>
 
       <!-- ===== SCREEN 6: REPORTS ===== -->
       <div class="screen" id="screen-reports">
         <div class="panel">
-          <div class="panel-title">Reports</div>
-          <div class="panel-desc">Simple totals for today, this week, and this month.</div>
+          <div class="panel-title" data-i18n="reports_title">Reports</div>
+          <div class="panel-desc" data-i18n="reports_desc">Simple totals for today, this week, and this month.</div>
           <div class="report-grid" id="reportGrid"></div>
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">Recent Work</div>
+          <div class="panel-title" data-i18n="recent_work_title">Recent Work</div>
           <div id="reportRecentBills" class="recent-list"></div>
         </div>
       </div>
@@ -258,23 +260,23 @@
       <!-- ===== SCREEN 7: SETTINGS ===== -->
       <div class="screen" id="screen-settings">
         <div class="panel">
-          <div class="panel-title">Theme</div>
-          <div class="panel-desc">Pick the look that is easiest on the eyes.</div>
+          <div class="panel-title" data-i18n="settings_theme_title">Theme</div>
+          <div class="panel-desc" data-i18n="settings_theme_desc">Pick the look that is easiest on the eyes.</div>
           <div class="theme-options">
-            <button class="theme-choice" type="button" data-theme="dark"><span class="swatch swatch-dark"></span> Dark</button>
-            <button class="theme-choice" type="button" data-theme="light"><span class="swatch swatch-light"></span> Light</button>
-            <button class="theme-choice" type="button" data-theme="comfort"><span class="swatch swatch-comfort"></span> Comfort</button>
+            <button class="theme-choice" type="button" data-theme="dark"><span class="swatch swatch-dark"></span> <span data-i18n="theme_dark">Dark</span></button>
+            <button class="theme-choice" type="button" data-theme="light"><span class="swatch swatch-light"></span> <span data-i18n="theme_light">Light</span></button>
+            <button class="theme-choice" type="button" data-theme="comfort"><span class="swatch swatch-comfort"></span> <span data-i18n="theme_comfort">Comfort</span></button>
           </div>
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">Manage Service Catalog</div>
-          <div class="panel-desc">Add, edit, or remove services and standard prices available for jobs.</div>
+          <div class="panel-title" data-i18n="settings_catalog_title">Manage Service Catalog</div>
+          <div class="panel-desc" data-i18n="settings_catalog_desc">Add, edit, or remove services and standard prices available for jobs.</div>
           
           <form id="catalogForm" class="add-custom-row" style="margin-bottom: 20px;">
-            <input class="item-name" type="text" id="cat_name" placeholder="New service name (e.g. Carburetor Cleaning)" required>
-            <input class="item-price" type="text" id="cat_price" placeholder="Rs price" inputmode="numeric" required>
-            <button class="btn btn-primary" style="white-space: nowrap;" type="submit">Add Service</button>
+            <input class="item-name" type="text" id="cat_name" data-i18n-placeholder="ph_cat_name" placeholder="New service name (e.g. Carburetor Cleaning)" required>
+            <input class="item-price" type="text" id="cat_price" data-i18n-placeholder="ph_cat_price" placeholder="Rs price" inputmode="numeric" required>
+            <button class="btn btn-primary" style="white-space: nowrap;" type="submit" data-i18n="btn_add_service">Add Service</button>
           </form>
 
           <div id="catalogList" class="catalog-manager-list">
@@ -283,29 +285,29 @@
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">Backup & Restore</div>
-          <div class="panel-desc">Save a copy of shop data, or restore from an older backup file.</div>
+          <div class="panel-title" data-i18n="settings_backup_title">Backup &amp; Restore</div>
+          <div class="panel-desc" data-i18n="settings_backup_desc">Save a copy of shop data, or restore from an older backup file.</div>
           <div class="form-actions settings-actions">
-            <button class="btn btn-primary" type="button" id="backupBtn">Create Backup</button>
-            <button class="btn btn-ghost" type="button" id="autoBackupDirBtn">Choose Auto Backup Folder</button>
-            <button class="btn btn-ghost" type="button" id="restoreBtn">Restore Backup</button>
+            <button class="btn btn-primary" type="button" id="backupBtn" data-i18n="btn_create_backup">Create Backup</button>
+            <button class="btn btn-ghost" type="button" id="autoBackupDirBtn" data-i18n="btn_auto_backup_dir">Choose Auto Backup Folder</button>
+            <button class="btn btn-ghost" type="button" id="restoreBtn" data-i18n="btn_restore_backup">Restore Backup</button>
           </div>
-          <div class="empty-note" id="backupStatus">Backup files contain customers, jobs, bills, services, and reminders.</div>
+          <div class="empty-note" id="backupStatus" data-i18n="backup_status_default">Backup files contain customers, jobs, bills, services, and reminders.</div>
         </div>
 
         <div class="panel" style="margin-top:18px;">
-          <div class="panel-title">📱 Mobile &amp; Phone Access</div>
-          <div class="panel-desc">Access GEARHEAD from your phone — scan the QR code or open the link directly.</div>
+          <div class="panel-title" data-i18n="settings_mobile_title">📱 Mobile &amp; Phone Access</div>
+          <div class="panel-desc" data-i18n="settings_mobile_desc">Access GEARHEAD from your phone — scan the QR code or open the link directly.</div>
           <div id="mobileAccessStatus" class="mobile-status-row">
             <span class="mobile-status-dot" id="mobileStatusDot"></span>
-            <span id="mobileStatusText">Starting server…</span>
+            <span id="mobileStatusText" data-i18n="mobile_server_starting">Starting server…</span>
           </div>
           <div class="form-actions settings-actions" style="margin-top:12px;">
-            <button class="btn btn-primary" type="button" id="showQrBtn">📷 Show QR Code</button>
-            <button class="btn btn-ghost" type="button" id="copyLocalUrl">Copy LAN Link</button>
-            <button class="btn btn-ghost" type="button" id="copyTunnelUrl">Copy Cellular Link</button>
+            <button class="btn btn-primary" type="button" id="showQrBtn" data-i18n="btn_show_qr">📷 Show QR Code</button>
+            <button class="btn btn-ghost" type="button" id="copyLocalUrl" data-i18n="btn_copy_lan">Copy LAN Link</button>
+            <button class="btn btn-ghost" type="button" id="copyTunnelUrl" data-i18n="btn_copy_cellular">Copy Cellular Link</button>
           </div>
-          <div class="empty-note" id="mobileAccessNote" style="margin-top:10px;">
+          <div class="empty-note" id="mobileAccessNote" style="margin-top:10px;" data-i18n="mobile_note">
             Devices on the same Wi-Fi use the LAN link. The Cellular link works anywhere in the world.
           </div>
         </div>
@@ -315,6 +317,7 @@
   </main>
 </div>
 
+<script src="i18n.js"></script>
 <script src="renderer.js"></script>
 
 <!-- ===================== QR MODAL ===================== -->
@@ -327,27 +330,27 @@
     <div class="qr-header">
       <div class="brand-mark qr-brand-mark"></div>
       <div>
-        <div class="qr-title">GEARHEAD Mobile</div>
-        <div class="qr-subtitle" id="qrSubtitle">Scan to open on your phone</div>
+        <div class="qr-title" data-i18n="qr_title">HAMZA HONDA Mobile</div>
+        <div class="qr-subtitle" id="qrSubtitle" data-i18n="qr_subtitle">Scan to open on your phone</div>
       </div>
     </div>
 
     <div class="qr-tabs">
-      <button class="qr-tab active" id="tabLan" data-tab="lan">📶 Same Wi-Fi (LAN)</button>
-      <button class="qr-tab" id="tabTunnel" data-tab="tunnel">🌐 Cellular / Anywhere</button>
+      <button class="qr-tab active" id="tabLan" data-tab="lan" data-i18n="qr_tab_lan">📶 Same Wi-Fi (LAN)</button>
+      <button class="qr-tab" id="tabTunnel" data-tab="tunnel" data-i18n="qr_tab_tunnel">🌐 Cellular / Anywhere</button>
     </div>
 
     <div class="qr-pane" id="pane-lan">
       <div id="qrCodeLan" class="qr-code-box"></div>
       <div class="qr-url" id="urlLan">—</div>
-      <button class="btn btn-ghost btn-small" id="copyLanBtn" style="margin-top:10px;">Copy Link</button>
+      <button class="btn btn-ghost btn-small" id="copyLanBtn" style="margin-top:10px;" data-i18n="btn_copy_link">Copy Link</button>
     </div>
 
     <div class="qr-pane" id="pane-tunnel" style="display:none;">
       <div id="qrCodeTunnel" class="qr-code-box"></div>
       <div class="qr-url" id="urlTunnel">—</div>
-      <button class="btn btn-ghost btn-small" id="copyTunnelBtn" style="margin-top:10px;">Copy Link</button>
-      <div class="qr-tunnel-note">Powered by localtunnel. Works over cellular data worldwide. First visit may show a tunnel warning page — just click Continue.</div>
+      <button class="btn btn-ghost btn-small" id="copyTunnelBtn" style="margin-top:10px;" data-i18n="btn_copy_link">Copy Link</button>
+      <div class="qr-tunnel-note" data-i18n="qr_tunnel_note">Powered by localtunnel. Works over cellular data worldwide. First visit may show a tunnel warning page — just click Continue.</div>
     </div>
   </div>
 </div>

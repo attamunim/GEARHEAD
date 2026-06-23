@@ -1,34 +1,14 @@
 const api = window.gearhead;
 
-const screenCopy = {
-  intake: {
-    title: 'New Customer Intake',
-    sub: 'When a bike arrives at the shop, log it here first',
-  },
-  customers: {
-    title: 'Customers',
-    sub: 'View all customers, update details, delete records, and check visit history',
-  },
-  job: {
-    title: 'Add Job / Repair',
-    sub: 'Find the customer by bike number or mobile, then log completed work',
-  },
-  bill: {
-    title: 'Bills',
-    sub: 'Generated automatically when a job is marked done',
-  },
-  reminders: {
-    title: '30-Day Service Reminders',
-    sub: 'Customers due soon for their next service',
-  },
-  reports: {
-    title: 'Reports',
-    sub: 'Today, week, and month totals at a glance',
-  },
-  settings: {
-    title: 'Settings',
-    sub: 'Theme, backup, and restore',
-  },
+// Maps each screen name to its i18n title/subtitle keys
+const screenI18n = {
+  intake:    { title: 'topbar_intake',     sub: 'topbar_intake_sub' },
+  customers: { title: 'topbar_customers',  sub: 'topbar_customers_sub' },
+  job:       { title: 'topbar_job',        sub: 'topbar_job_sub' },
+  bill:      { title: 'topbar_bill',       sub: 'topbar_bill_sub' },
+  reminders: { title: 'topbar_reminders',  sub: 'topbar_reminders_sub' },
+  reports:   { title: 'topbar_reports',    sub: 'topbar_reports_sub' },
+  settings:  { title: 'topbar_settings',   sub: 'topbar_settings_sub' },
 };
 
 let selectedCustomer = null;
@@ -37,7 +17,17 @@ let catalog = [];
 let allCustomers = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Apply saved language first so the UI renders correctly from the start
+  if (window.i18n) {
+    i18n.applyAll();
+    // Sync html[dir] from saved lang
+    const lang = i18n.getLang();
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = lang === 'ur' ? 'rtl' : 'ltr';
+  }
+
   wireSidebar();
+  wireLangToggle();
   wireIntakeForm();
   wireCustomerScreen();
   wireJobForm();
@@ -47,6 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
   fillCurrentDateTime();
   refreshLists();
 });
+
+function wireLangToggle() {
+  const btn = document.getElementById('langToggleBtn');
+  if (!btn || !window.i18n) return;
+  btn.addEventListener('click', () => {
+    const next = i18n.getLang() === 'en' ? 'ur' : 'en';
+    i18n.setLang(next);
+    // Refresh topbar for the current screen
+    const activeScreen = document.querySelector('.nav-item.active')?.dataset?.screen;
+    if (activeScreen) _updateTopbar(activeScreen);
+  });
+}
 
 function wireSidebar() {
   document.querySelectorAll('.nav-item[data-screen]').forEach((item) => {
@@ -63,11 +65,7 @@ function showScreen(target) {
     screen.classList.toggle('active', screen.id === `screen-${target}`);
   });
 
-  const copy = screenCopy[target];
-  if (copy) {
-    document.getElementById('topbarTitle').textContent = copy.title;
-    document.getElementById('topbarSub').textContent = copy.sub;
-  }
+  _updateTopbar(target);
 
   if (target === 'job') loadCatalog();
   if (target === 'customers') loadCustomers();
@@ -75,6 +73,15 @@ function showScreen(target) {
   if (target === 'reminders') loadReminders();
   if (target === 'reports') loadReports();
   if (target === 'settings') loadSettingsCatalog();
+}
+
+function _updateTopbar(screen) {
+  const keys = screenI18n[screen];
+  if (!keys) return;
+  const title = window.i18n ? i18n.t(keys.title) : keys.title;
+  const sub   = window.i18n ? i18n.t(keys.sub)   : keys.sub;
+  document.getElementById('topbarTitle').textContent = title;
+  document.getElementById('topbarSub').textContent   = sub;
 }
 
 function wireIntakeForm() {
@@ -653,8 +660,13 @@ function renderBill(data) {
   preview.innerHTML = `
     <div class="bill-preview">
       <div class="bill-head">
-        <div class="shop-name">GEARHEAD</div>
-        <div class="shop-meta">Bike Service</div>
+        <div class="bill-logo">
+          <div class="honda-badge">HONDA</div>
+        </div>
+        <div class="shop-name">HAMZA HONDA</div>
+        <div class="shop-meta">CHENAB AUTOMOTIVE PARTS</div>
+        <div class="shop-address">ADA Sufi More, Chiniot Road Jhang</div>
+        <div class="shop-phones">0345-4082226 / 0341-2332 / 0345-4009356</div>
       </div>
       <div class="bill-meta-row"><span>Customer</span><b>${escapeHtml(data.customer.name)}</b></div>
       <div class="bill-meta-row"><span>Bike</span><b>${escapeHtml(data.customer.bike_number)}</b></div>
@@ -662,7 +674,7 @@ function renderBill(data) {
       <div class="bill-line head"><span>Item</span><span>Amount</span></div>
       ${data.items.map((item) => `<div class="bill-line"><span>${escapeHtml(item.name)}</span><span>Rs ${Number(item.price).toLocaleString()}</span></div>`).join('')}
       <div class="bill-total-row"><span>Total</span><span>Rs ${Number(data.bill.total).toLocaleString()}</span></div>
-      <div class="bill-foot">Thank you for choosing GEARHEAD.</div>
+      <div class="bill-foot">Thank you for choosing HAMZA HONDA.</div>
     </div>
   `;
 }

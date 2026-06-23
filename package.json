@@ -19,7 +19,7 @@
   "type": "commonjs",
   "build": {
     "appId": "com.gearhead.workshop",
-    "productName": "GEARHEAD",
+    "productName": "HAMZA HONDA",
     "directories": {
       "output": "dist"
     },
@@ -31,6 +31,7 @@
       "index.html",
       "styles.css",
       "db.js",
+      "i18n.js",
       "package.json"
     ],
     "asarUnpack": [

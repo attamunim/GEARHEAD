@@ -186,7 +186,7 @@ body {
 }
 
 .brand-mark::after {
-  content: 'G';
+  content: 'H';
   position: absolute;
   z-index: 2;
   top: 50%; left: 50%;
@@ -944,6 +944,40 @@ body {
   letter-spacing: 1px;
 }
 
+.bill-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.honda-badge {
+  display: inline-block;
+  background: #CC0000;
+  color: #fff;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 3px;
+  padding: 6px 18px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.bill-head .shop-address {
+  font-size: 11.5px;
+  color: hsl(210, 12%, 40%);
+  margin-top: 3px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.bill-head .shop-phones {
+  font-size: 11.5px;
+  color: hsl(210, 12%, 40%);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.3px;
+}
+
 .bill-meta-row {
   display: flex;
   justify-content: space-between;
@@ -1616,6 +1650,12 @@ body {
   color: var(--orange);
   font-weight: 800;
   font-size: 16px;
+}
+
+/* Hide panel title/desc strip that sits above the bill invoice preview */
+#bill_panel > .panel-title,
+#bill_panel > .panel-desc {
+  display: none;
 }
 
 /* Printer stylesheet overrides */
