@@ -272,11 +272,21 @@ const queries = {
 
   listActiveJobs() {
     return db.prepare(`
-      SELECT jobs.*, customers.name, customers.bike_number, customers.mobile
+      SELECT jobs.*, customers.name, customers.bike_number, customers.mobile,
+             COALESCE((SELECT SUM(ji.price) FROM job_items ji WHERE ji.job_id = jobs.id), 0) AS total
       FROM jobs JOIN customers ON customers.id = jobs.customer_id
       WHERE jobs.status = 'in_progress'
       ORDER BY jobs.created_at DESC
     `).all();
+  },
+
+  updateJob({ id, notes }) {
+    db.prepare('UPDATE jobs SET notes = ? WHERE id = ?').run(notes || null, id);
+    return db.prepare('SELECT * FROM jobs WHERE id = ?').get(id);
+  },
+
+  deleteJob(id) {
+    return db.prepare('DELETE FROM jobs WHERE id = ?').run(id);
   },
 
   // ---- bills ----

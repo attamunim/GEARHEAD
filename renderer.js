@@ -67,12 +67,14 @@ function showScreen(target) {
 
   _updateTopbar(target);
 
-  if (target === 'job') loadCatalog();
+  if (target === 'job') {
+    if (!currentJob) loadCatalog();
+    loadActiveJobs();
+  }
   if (target === 'customers') loadCustomers();
   if (target === 'bill') loadRecentBills();
   if (target === 'reminders') loadReminders();
   if (target === 'reports') loadReports();
-  if (target === 'settings') loadSettingsCatalog();
 }
 
 function _updateTopbar(screen) {
@@ -125,6 +127,7 @@ function wireJobForm() {
   document.getElementById('job_addCustomBtn').addEventListener('click', addCustomItem);
   document.getElementById('job_saveDraft').addEventListener('click', saveJobDraft);
   document.getElementById('job_completeBtn').addEventListener('click', completeJob);
+  document.getElementById('job_cancelEdit').addEventListener('click', cancelJobEdit);
 }
 
 function wireCustomerScreen() {
@@ -140,7 +143,7 @@ function wireCustomerScreen() {
     const action = button.dataset.action;
 
     if (action === 'report') {
-      await loadCustomerReport(id);
+      await api.customer.openReport(id);
       return;
     }
 
@@ -206,8 +209,6 @@ function wireSettings() {
   });
 
   loadAutoBackupStatus();
-  wireSettingsCatalogForm();
-  loadSettingsCatalog();
 }
 
 function applySavedTheme() {
@@ -348,51 +349,63 @@ async function deleteCustomer(id) {
   if (!ok) return;
 
   await api.customer.delete(id);
-  document.getElementById('customerReportPanel').style.display = 'none';
   await Promise.all([loadCustomers(), refreshLists()]);
   toast('Customer deleted');
 }
 
-async function loadCustomerReport(id) {
-  const report = await api.customer.visits(id);
-  const panel = document.getElementById('customerReportPanel');
-  const target = document.getElementById('customerReport');
-
-  if (!report) {
-    panel.style.display = 'none';
-    toast('Customer not found');
-    return;
-  }
-
-  panel.style.display = '';
-  target.innerHTML = `
-    <div class="report-headline">
-      <div>
-        <div class="report-person">${escapeHtml(report.customer.name)}</div>
-        <div class="customer-meta">${escapeHtml(report.customer.bike_number)} | ${escapeHtml(report.customer.mobile)}</div>
-      </div>
-      <div class="report-count">${report.visit_count} visits</div>
-    </div>
-    <div class="visit-list">
-      ${report.visits.map((visit) => `
-        <div class="visit-row">
-          <div>
-            <div class="visit-date">${formatDateTime(visit.created_at)}</div>
-            <div class="visit-meta">${visit.status === 'done' ? `Completed ${formatDateTime(visit.completed_at)}` : 'In progress'}${visit.meter_reading ? ` | ${Number(visit.meter_reading).toLocaleString()} km` : ''}</div>
-            <div class="visit-items">${visit.items.length ? visit.items.map((item) => escapeHtml(item.name)).join(', ') : escapeHtml(visit.notes || 'No items saved')}</div>
-          </div>
-          <div class="visit-total">Rs ${Number(visit.total).toLocaleString()}</div>
-        </div>
-      `).join('') || '<div class="empty-note">No visits/jobs recorded yet.</div>'}
-    </div>
-  `;
-}
 
 async function loadActiveJobs() {
   const badge = document.getElementById('activeJobsBadge');
   const jobs = await api.job.listActive();
   badge.textContent = jobs.length;
   badge.style.display = jobs.length ? '' : 'none';
+  renderActiveDrafts(jobs);
+}
+
+function renderActiveDrafts(jobs) {
+  const list = document.getElementById('activeDraftsList');
+  if (!list) return;
+
+  if (!jobs.length) {
+    const noText = window.i18n ? i18n.t('no_drafts') : 'No active drafts.';
+    list.innerHTML = `<div class="empty-note">${noText}</div>`;
+    return;
+  }
+
+  list.innerHTML = jobs.map((job) => `
+    <div class="recent-row draft-row" data-job-id="${job.id}" data-customer-id="${job.customer_id}">
+      <div class="rr-main">
+        <div class="rr-name">${escapeHtml(job.name)}</div>
+        <div class="rr-meta">${escapeHtml(job.bike_number)} | ${formatDate(job.created_at)}${job.notes ? ' | ' + escapeHtml(job.notes) : ''}</div>
+      </div>
+      <div class="rr-amount">Rs ${Number(job.total).toLocaleString()}</div>
+      <div class="draft-actions">
+        <button class="btn btn-ghost btn-small draft-edit-btn" data-job-id="${job.id}" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-small draft-delete-btn" data-job-id="${job.id}" title="Delete">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.draft-edit-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editJobDraft(Number(btn.dataset.jobId));
+    });
+  });
+
+  list.querySelectorAll('.draft-delete-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteJobDraft(Number(btn.dataset.jobId));
+    });
+  });
+
+  // Clicking the row itself also edits
+  list.querySelectorAll('.draft-row').forEach((row) => {
+    row.addEventListener('click', () => {
+      editJobDraft(Number(row.dataset.jobId));
+    });
+  });
 }
 
 async function loadCatalog() {
@@ -400,7 +413,7 @@ async function loadCatalog() {
   renderCatalog();
 }
 
-function renderCatalog() {
+function renderCatalog(newCheckedName, newCheckedPrice) {
   const list = document.getElementById('job_serviceList');
   if (!list) return;
 
@@ -416,10 +429,15 @@ function renderCatalog() {
     return name;
   });
 
+  if (newCheckedName) {
+    checkedNames.push(newCheckedName);
+    checkedPrices[newCheckedName] = newCheckedPrice;
+  }
+
   // 2. Render catalog items, preserving checks and edited prices
   list.innerHTML = catalog.map((item) => {
     const isChecked = checkedNames.includes(item.name);
-    const currentPrice = isChecked ? checkedPrices[item.name] : item.price;
+    const currentPrice = isChecked ? checkedPrices[item.name] : 0;
     return serviceRow(item.name, currentPrice, isChecked);
   }).join('');
 
@@ -444,7 +462,7 @@ function serviceRow(name, price, isChecked = false) {
       <input type="checkbox" data-name="${escapeAttr(name)}"${isChecked ? ' checked' : ''}>
       <span class="service-name">${escapeHtml(name)}</span>
       <span class="service-price-wrap">
-        <input class="service-price" type="text" inputmode="numeric" value="00">
+        <input class="service-price" type="text" inputmode="numeric" value="${price}">
       </span>
     </label>
   `;
@@ -511,7 +529,7 @@ function addCustomItem() {
   document.getElementById('job_customPrice').value = '';
   
   // Render catalog, keeping all previously checked items checked!
-  renderCatalog();
+  renderCatalog(name, price);
 
   // Check the new item at the bottom (so the added item is selected immediately)
   const rows = document.querySelectorAll('#job_serviceList .service-row');
@@ -535,6 +553,9 @@ async function saveJobDraft() {
       meter_reading: selectedCustomer.meter_reading,
       notes: value('job_notes'),
     });
+  } else {
+    // Update existing draft notes
+    await api.job.update({ id: currentJob.id, notes: value('job_notes') });
   }
 
   await api.job.setItems({ job_id: currentJob.id, items: selectedItems() });
@@ -548,10 +569,116 @@ async function completeJob() {
   if (!job) return;
 
   const bill = await api.job.complete(job.id);
+  // Reset form state after completing
+  cancelJobEdit();
   await refreshLists();
   renderBill(bill);
   showScreen('bill');
   toast('Bill generated');
+}
+
+async function editJobDraft(jobId) {
+  const job = await api.job.get(jobId);
+  if (!job) { toast('Draft not found'); return; }
+
+  const customer = await api.customer.get(job.customer_id);
+  if (!customer) { toast('Customer not found'); return; }
+
+  // Select the customer without resetting currentJob
+  selectedCustomer = customer;
+  currentJob = job;
+
+  const found = document.getElementById('job_customerFound');
+  found.style.display = '';
+  found.innerHTML = `
+    <div class="cf-avatar">${initials(customer.name)}</div>
+    <div class="cf-info">
+      <div class="cf-name">${escapeHtml(customer.name)}</div>
+      <div class="cf-meta">${escapeHtml(customer.bike_number)} | ${escapeHtml(customer.mobile)}</div>
+    </div>
+    <div class="cf-tag">Editing Draft</div>
+  `;
+
+  document.getElementById('job_formArea').style.display = '';
+  document.getElementById('job_searchResults').innerHTML = '';
+  document.getElementById('job_search').value = '';
+
+  // Fill notes
+  document.getElementById('job_notes').value = job.notes || '';
+
+  // Load catalog and then overlay the draft's saved items
+  catalog = await api.catalog.list();
+  const draftItems = await api.job.getItems(jobId);
+
+  // Merge any custom items from draft into catalog
+  for (const item of draftItems) {
+    if (!catalog.find(c => c.name === item.name)) {
+      catalog.push({ name: item.name, price: item.price });
+    }
+  }
+
+  // Build a map of draft item names -> prices
+  const draftMap = {};
+  for (const item of draftItems) draftMap[item.name] = item.price;
+
+  // Render catalog
+  const listEl = document.getElementById('job_serviceList');
+  listEl.innerHTML = catalog.map((item) => {
+    const isDraftItem = item.name in draftMap;
+    const price = isDraftItem ? draftMap[item.name] : 0;
+    return serviceRow(item.name, price, isDraftItem);
+  }).join('');
+
+  // Re-bind event listeners
+  listEl.querySelectorAll('.service-row input').forEach((input) => {
+    input.addEventListener('input', updateRunningTotal);
+  });
+  listEl.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      checkbox.closest('.service-row').classList.toggle('checked', checkbox.checked);
+      updateRunningTotal();
+    });
+  });
+
+  updateRunningTotal();
+
+  // Show cancel button
+  document.getElementById('job_cancelEdit').style.display = '';
+
+  // Fill date/time
+  fillCurrentDateTime();
+
+  // Scroll to top of job screen
+  document.getElementById('screen-job').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelJobEdit() {
+  selectedCustomer = null;
+  currentJob = null;
+
+  document.getElementById('job_customerFound').style.display = 'none';
+  document.getElementById('job_customerFound').innerHTML = '';
+  document.getElementById('job_formArea').style.display = 'none';
+  document.getElementById('job_notes').value = '';
+  document.getElementById('job_serviceList').innerHTML = '';
+  document.getElementById('job_runningTotal').textContent = 'Rs 0';
+  document.getElementById('job_cancelEdit').style.display = 'none';
+  document.getElementById('job_search').value = '';
+  document.getElementById('job_searchResults').innerHTML = '';
+}
+
+async function deleteJobDraft(jobId) {
+  if (!confirm('Delete this draft? This cannot be undone.')) return;
+
+  await api.job.delete(jobId);
+
+  // If we were editing this draft, cancel the edit
+  if (currentJob && currentJob.id === jobId) {
+    cancelJobEdit();
+  }
+
+  await loadActiveJobs();
+  toast('Draft deleted');
 }
 
 function selectedItems() {
@@ -664,7 +791,6 @@ function renderBill(data) {
           <div class="honda-badge">HONDA</div>
         </div>
         <div class="shop-name">HAMZA HONDA</div>
-        <div class="shop-meta">CHENAB AUTOMOTIVE PARTS</div>
         <div class="shop-address">ADA Sufi More, Chiniot Road Jhang</div>
         <div class="shop-phones">0345-4082226 / 0341-2332 / 0345-4009356</div>
       </div>
@@ -705,114 +831,6 @@ async function loadReminders() {
 
   list.querySelectorAll('.reminder-call').forEach((button) => {
     button.addEventListener('click', () => api.phone.call(button.dataset.mobile));
-  });
-}
-
-function wireSettingsCatalogForm() {
-  const form = document.getElementById('catalogForm');
-  if (!form) return;
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = value('cat_name');
-    const price = Number(value('cat_price')) || 0;
-    
-    if (!name) return;
-
-    await api.catalog.add({ name, price });
-    form.reset();
-    toast('Service added to catalog');
-    await loadSettingsCatalog();
-    if (document.getElementById('screen-job').classList.contains('active')) {
-      await loadCatalog();
-    }
-  });
-}
-
-async function loadSettingsCatalog() {
-  const list = document.getElementById('catalogList');
-  if (!list) return;
-
-  const catalogItems = await api.catalog.list();
-  
-  list.innerHTML = catalogItems.map(item => `
-    <div class="catalog-item-row" data-id="${item.id}">
-      <div class="cat-info">
-        <span class="cat-name">${escapeHtml(item.name)}</span>
-        <span class="cat-price">Rs ${Number(item.price).toLocaleString()}</span>
-      </div>
-      <div class="cat-edit-fields" style="display: none;">
-        <input class="item-name" type="text" data-field="name" value="${escapeAttr(item.name)}">
-        <input class="item-price" type="text" data-field="price" value="${Number(item.price)}" inputmode="numeric">
-      </div>
-      <div class="cat-actions">
-        <button class="btn btn-ghost btn-small cat-edit-btn" type="button">Edit</button>
-        <button class="btn btn-primary btn-small cat-save-btn" type="button" style="display: none;">Save</button>
-        <button class="btn btn-ghost btn-small cat-cancel-btn" type="button" style="display: none;">Cancel</button>
-        <button class="btn btn-danger btn-small cat-delete-btn" type="button">Delete</button>
-      </div>
-    </div>
-  `).join('') || '<div class="empty-note">No services in the catalog.</div>';
-
-  list.querySelectorAll('.catalog-item-row').forEach(row => {
-    const id = Number(row.dataset.id);
-    const editBtn = row.querySelector('.cat-edit-btn');
-    const saveBtn = row.querySelector('.cat-save-btn');
-    const cancelBtn = row.querySelector('.cat-cancel-btn');
-    const deleteBtn = row.querySelector('.cat-delete-btn');
-    const infoDiv = row.querySelector('.cat-info');
-    const editDiv = row.querySelector('.cat-edit-fields');
-
-    editBtn.addEventListener('click', () => {
-      row.classList.add('editing');
-      infoDiv.style.display = 'none';
-      editDiv.style.display = 'flex';
-      editBtn.style.display = 'none';
-      deleteBtn.style.display = 'none';
-      saveBtn.style.display = '';
-      cancelBtn.style.display = '';
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      row.classList.remove('editing');
-      infoDiv.style.display = 'flex';
-      editDiv.style.display = 'none';
-      editBtn.style.display = '';
-      deleteBtn.style.display = '';
-      saveBtn.style.display = 'none';
-      cancelBtn.style.display = 'none';
-    });
-
-    saveBtn.addEventListener('click', async () => {
-      const nameInput = editDiv.querySelector('[data-field="name"]');
-      const priceInput = editDiv.querySelector('[data-field="price"]');
-      const name = nameInput.value.trim();
-      const price = Number(priceInput.value) || 0;
-
-      if (!name) {
-        toast('Service name is required');
-        return;
-      }
-
-      await api.catalog.update({ id, name, price });
-      toast('Service updated');
-      await loadSettingsCatalog();
-      if (document.getElementById('screen-job').classList.contains('active')) {
-        await loadCatalog();
-      }
-    });
-
-    deleteBtn.addEventListener('click', async () => {
-      const name = infoDiv.querySelector('.cat-name').textContent;
-      const ok = confirm(`Delete "${name}" from the global catalog?`);
-      if (!ok) return;
-
-      await api.catalog.delete(id);
-      toast('Service deleted');
-      await loadSettingsCatalog();
-      if (document.getElementById('screen-job').classList.contains('active')) {
-        await loadCatalog();
-      }
-    });
   });
 }
 

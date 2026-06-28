@@ -1078,6 +1078,29 @@ body {
   font-size: 14.5px;
 }
 
+/* Draft row actions */
+.draft-row {
+  flex-wrap: nowrap;
+}
+
+.draft-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.draft-actions .btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  min-width: auto;
+  line-height: 1;
+}
+
+.draft-row:hover .draft-actions .btn {
+  opacity: 1;
+}
+
 /* Customers list screen & Professional stats columns */
 .customer-list {
   display: flex;

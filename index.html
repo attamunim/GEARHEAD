@@ -147,11 +147,6 @@
           <div id="customerList" class="customer-list"></div>
         </div>
 
-        <div class="panel" id="customerReportPanel" style="display:none; margin-top:18px;">
-          <div class="panel-title" data-i18n="customer_report_title">Customer Report</div>
-          <div class="panel-desc" data-i18n="customer_report_desc">Visit count with date and time for every recorded job.</div>
-          <div id="customerReport"></div>
-        </div>
       </div>
 
       <!-- ===== SCREEN 3: ADD JOB / REPAIR DONE ===== -->
@@ -205,10 +200,17 @@
 
             <div class="form-actions" style="margin-top:18px;">
               <button type="button" class="btn btn-ghost" id="job_saveDraft" data-i18n="btn_save_draft">Save Draft</button>
+              <button type="button" class="btn btn-ghost" id="job_cancelEdit" data-i18n="btn_cancel_edit" style="display:none;">Cancel Edit</button>
               <button type="button" class="btn btn-primary" id="job_completeBtn" data-i18n="btn_complete_job">Mark Job Done → Generate Bill</button>
             </div>
           </div>
 
+        </div>
+
+        <div class="panel" style="margin-top:18px;">
+          <div class="panel-title" data-i18n="active_drafts_title">Active Drafts</div>
+          <div class="panel-desc" data-i18n="active_drafts_desc">Unfinished jobs saved as drafts. Click to edit, or delete to remove.</div>
+          <div id="activeDraftsList" class="recent-list"></div>
         </div>
       </div>
 
@@ -269,20 +271,6 @@
           </div>
         </div>
 
-        <div class="panel" style="margin-top:18px;">
-          <div class="panel-title" data-i18n="settings_catalog_title">Manage Service Catalog</div>
-          <div class="panel-desc" data-i18n="settings_catalog_desc">Add, edit, or remove services and standard prices available for jobs.</div>
-          
-          <form id="catalogForm" class="add-custom-row" style="margin-bottom: 20px;">
-            <input class="item-name" type="text" id="cat_name" data-i18n-placeholder="ph_cat_name" placeholder="New service name (e.g. Carburetor Cleaning)" required>
-            <input class="item-price" type="text" id="cat_price" data-i18n-placeholder="ph_cat_price" placeholder="Rs price" inputmode="numeric" required>
-            <button class="btn btn-primary" style="white-space: nowrap;" type="submit" data-i18n="btn_add_service">Add Service</button>
-          </form>
-
-          <div id="catalogList" class="catalog-manager-list">
-            <!-- Dynamically filled with services -->
-          </div>
-        </div>
 
         <div class="panel" style="margin-top:18px;">
           <div class="panel-title" data-i18n="settings_backup_title">Backup &amp; Restore</div>

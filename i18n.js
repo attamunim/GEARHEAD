@@ -71,6 +71,10 @@
       btn_refresh:           'Refresh',
       customer_report_title: 'Customer Report',
       customer_report_desc:  'Visit count with date and time for every recorded job.',
+      report_win_title:      'Customer Visit Report',
+      report_win_subtitle:   'Detailed service history for this customer',
+      btn_print_report:      '🖨 Print',
+      btn_close_report:      'Close',
 
       // ── Screen 3: Job ──────────────────────────────────────────────────
       job_panel_title:   'Add Job — What Was Done',
@@ -88,6 +92,10 @@
       lbl_running_total: 'Running Total',
       btn_save_draft:    'Save Draft',
       btn_complete_job:  'Mark Job Done → Generate Bill',
+      active_drafts_title: 'Active Drafts',
+      active_drafts_desc:  'Unfinished jobs saved as drafts. Click to edit, or delete to remove.',
+      no_drafts:           'No active drafts.',
+      btn_cancel_edit:     'Cancel Edit',
 
       // ── Screen 4: Bills ────────────────────────────────────────────────
       bill_panel_title:  'Bill',
@@ -114,11 +122,7 @@
       theme_dark:           'Dark',
       theme_light:          'Light',
       theme_comfort:        'Comfort',
-      settings_catalog_title: 'Manage Service Catalog',
-      settings_catalog_desc:  'Add, edit, or remove services and standard prices available for jobs.',
-      ph_cat_name:          'New service name (e.g. Carburetor Cleaning)',
-      ph_cat_price:         'Rs price',
-      btn_add_service:      'Add Service',
+
       settings_backup_title: 'Backup & Restore',
       settings_backup_desc:  'Save a copy of shop data, or restore from an older backup file.',
       btn_create_backup:    'Create Backup',
@@ -208,6 +212,10 @@
       btn_refresh:           'تازہ کریں',
       customer_report_title: 'کسٹمر رپورٹ',
       customer_report_desc:  'ہر کام کی تاریخ اور وقت کے ساتھ دوروں کی تعداد۔',
+      report_win_title:      'کسٹمر وزٹ رپورٹ',
+      report_win_subtitle:   'اس کسٹمر کے کام کی تفصیلی تفصیلات',
+      btn_print_report:      '🖨 پرنٹ کریں',
+      btn_close_report:      'بند کریں',
 
       // ── Screen 3: Job ──────────────────────────────────────────────────
       job_panel_title:   'کام درج کریں — کیا ہوا',
@@ -225,6 +233,10 @@
       lbl_running_total: 'کل رقم',
       btn_save_draft:    'مسودہ محفوظ کریں',
       btn_complete_job:  'کام مکمل → بل بنائیں',
+      active_drafts_title: 'مسودات (ڈرافٹس)',
+      active_drafts_desc:  'نامکمل کام جو مسودہ کے طور پر محفوظ ہیں۔ دیکھنے/ترمیم کے لیے کلک کریں، یا ڈیلیٹ دبائیں۔',
+      no_drafts:           'کوئی ڈرافٹ موجود نہیں۔',
+      btn_cancel_edit:     'ترمیم منسوخ کریں',
 
       // ── Screen 4: Bills ────────────────────────────────────────────────
       bill_panel_title:  'بل',
@@ -251,11 +263,7 @@
       theme_dark:           'تاریک',
       theme_light:          'روشن',
       theme_comfort:        'آرام دہ',
-      settings_catalog_title: 'سروس کیٹلاگ',
-      settings_catalog_desc:  'سروسز اور معیاری قیمتیں شامل کریں، ترمیم کریں یا حذف کریں۔',
-      ph_cat_name:          'نئی سروس کا نام (مثلاً: کاربوریٹر صفائی)',
-      ph_cat_price:         'روپے قیمت',
-      btn_add_service:      'سروس شامل کریں',
+
       settings_backup_title: 'بیک اپ اور بحالی',
       settings_backup_desc:  'دکان کا ڈیٹا محفوظ کریں یا پرانے بیک اپ سے بحال کریں۔',
       btn_create_backup:    'بیک اپ بنائیں',

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Customer Visit Report — HAMZA HONDA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  .report-title-section h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 5px 0;
+  }
+  .report-title-section p {
+    color: var(--paper-dim);
+    margin: 0;
+    font-size: 14px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  .report-meta-box {
+    background: var(--steel-700);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .meta-left .cust-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .meta-left .cust-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--paper-dim);
+  }
+  .meta-right .visit-badge {
+    background: var(--orange);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .visit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .visit-card {
+    background: var(--steel-700);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: transform 0.2s ease;
+  }
+  .visit-card:hover {
+    transform: translateX(2px);
+    border-color: var(--orange);
+  }
+  .visit-left {
+    flex: 1;
+  }
+  .visit-date-str {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .visit-sub-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin-bottom: 8px;
+  }
+  .visit-sub-meta .status-tag {
+    font-weight: bold;
+    color: var(--orange);
+  }
+  .visit-items-list {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .visit-right {
+    text-align: right;
+    margin-left: 20px;
+  }
+  .visit-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    color: var(--orange);
+    font-size: 16px;
+  }
+  @media print {
+    .actions {
+      display: none !important;
+    }
+    body {
+      background: #fff !important;
+      color: #000 !important;
+      padding: 0;
+    }
+    .report-meta-box, .visit-card {
+      border: 1px solid #ccc !important;
+      background: transparent !important;
+      color: #000 !important;
+      box-shadow: none !important;
+    }
+    .meta-left .cust-name, .visit-date-str, .visit-items-list {
+      color: #000 !important;
+    }
+    .visit-price {
+      color: #000 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="report-header">
+    <div class="report-title-section">
+      <h1 data-i18n="report_win_title">Customer Visit Report</h1>
+      <p data-i18n="report_win_subtitle">Detailed service history for this customer</p>
+    </div>
+    <div class="actions">
+      <button onclick="window.print()" class="btn btn-primary" data-i18n="btn_print_report">🖨 Print</button>
+      <button onclick="window.close()" class="btn btn-ghost" data-i18n="btn_close_report">Close</button>
+    </div>
+  </div>
+
+  <div class="report-meta-box">
+    <div class="meta-left">
+      <div id="customerName" class="cust-name">Loading...</div>
+      <div id="customerDetails" class="cust-info">Please wait...</div>
+    </div>
+    <div class="meta-right">
+      <span id="visitCount" class="visit-badge">0 visits</span>
+    </div>
+  </div>
+
+  <div id="visitList" class="visit-list">
+    <!-- Loaded dynamically -->
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="report-renderer.js"></script>
+</body>
+</html>

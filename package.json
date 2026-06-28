@@ -1,6 +1,6 @@
 {
   "name": "gearhead",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Gearhead workshop desktop app",
   "main": "main.js",
   "scripts": {
@@ -32,12 +32,16 @@
       "styles.css",
       "db.js",
       "i18n.js",
+      "icon.png",
+      "report.html",
+      "report-renderer.js",
       "package.json"
     ],
     "asarUnpack": [
       "node_modules/better-sqlite3/**"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "signAndEditExecutable": false,
       "target": [
         "nsis"

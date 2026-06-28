@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('gearhead', {
     update: (payload) => ipcRenderer.invoke('customer:update', payload),
     delete: (id) => ipcRenderer.invoke('customer:delete', id),
     visits: (id) => ipcRenderer.invoke('customer:visits', id),
+    openReport: (id) => ipcRenderer.invoke('customer:openReport', id),
   },
   job: {
     create: (payload) => ipcRenderer.invoke('job:create', payload),
@@ -24,6 +25,8 @@ contextBridge.exposeInMainWorld('gearhead', {
     complete: (jobId) => ipcRenderer.invoke('job:complete', jobId),
     get: (jobId) => ipcRenderer.invoke('job:get', jobId),
     listActive: () => ipcRenderer.invoke('job:listActive'),
+    update: (payload) => ipcRenderer.invoke('job:update', payload),
+    delete: (jobId) => ipcRenderer.invoke('job:delete', jobId),
   },
   bill: {
     getByJob: (jobId) => ipcRenderer.invoke('bill:getByJob', jobId),

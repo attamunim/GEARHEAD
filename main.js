@@ -13,6 +13,7 @@ let backupTo;
 let restoreFrom;
 let dailyBackupTimer;
 let appSettings = {};
+let reportWindows = {};
 
 function createWindow() {
   Menu.setApplicationMenu(null);
@@ -22,6 +23,7 @@ function createWindow() {
     height: 820,
     minWidth: 980,
     minHeight: 640,
+    icon: path.join(__dirname, 'icon.png'),
     backgroundColor: '#15171a',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -90,6 +92,7 @@ function registerIpcHandlers() {
   ipcMain.handle('customer:update', (e, payload) => queries.updateCustomer(payload));
   ipcMain.handle('customer:delete', (e, id) => queries.deleteCustomer(id));
   ipcMain.handle('customer:visits', (e, id) => queries.getCustomerVisitReport(id));
+  ipcMain.handle('customer:openReport', (e, id) => openReportWindow(id));
 
   // ---- jobs ----
   ipcMain.handle('job:create', (e, payload) => queries.createJob(payload));
@@ -98,6 +101,8 @@ function registerIpcHandlers() {
   ipcMain.handle('job:complete', (e, job_id) => queries.completeJobAndBill(job_id));
   ipcMain.handle('job:get', (e, job_id) => queries.getJob(job_id));
   ipcMain.handle('job:listActive', () => queries.listActiveJobs());
+  ipcMain.handle('job:update', (e, payload) => queries.updateJob(payload));
+  ipcMain.handle('job:delete', (e, job_id) => queries.deleteJob(job_id));
 
   // ---- bills ----
   ipcMain.handle('bill:getByJob', (e, job_id) => queries.getBillByJob(job_id));
@@ -253,3 +258,34 @@ function getAutoBackupFiles(backupDir) {
     })
     .sort((a, b) => b.mtimeMs - a.mtimeMs);
 }
+
+function openReportWindow(id) {
+  if (reportWindows[id]) {
+    reportWindows[id].focus();
+    return;
+  }
+
+  const reportWindow = new BrowserWindow({
+    width: 800,
+    height: 700,
+    minWidth: 600,
+    minHeight: 500,
+    icon: path.join(__dirname, 'icon.png'),
+    backgroundColor: '#15171a',
+    title: 'Customer Visit Report',
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+
+  reportWindows[id] = reportWindow;
+
+  reportWindow.loadFile(path.join(__dirname, 'report.html'), { query: { id: id.toString() } });
+  
+  reportWindow.on('closed', () => {
+    delete reportWindows[id];
+  });
+}
+
